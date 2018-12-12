@@ -16,7 +16,7 @@ public class Client  extends Application
 { 
 
 	final static int ServerPort = 1234; 
-	DataOutputStream dos;
+	
 
 	public static void main(String args[]) throws UnknownHostException, IOException  
 	{ 
@@ -68,7 +68,7 @@ public class Client  extends Application
 
 		// obtaining input and out streams 
 		DataInputStream dis = new DataInputStream(s.getInputStream()); 
-		dos = new DataOutputStream(s.getOutputStream()); 
+		DataOutputStream dos = new DataOutputStream(s.getOutputStream()); 
 
 
 		

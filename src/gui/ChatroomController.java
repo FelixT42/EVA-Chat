@@ -25,7 +25,7 @@ public class ChatroomController {
 	protected void senden(MouseEvent event) {
 		send=true;
 	}
-	public void setReceivedMessage(String receivedTxt) {
+	public synchronized void setReceivedMessage(String receivedTxt) {
 		tChatverlauf.setText(receivedTxt);		
 		
 	}
