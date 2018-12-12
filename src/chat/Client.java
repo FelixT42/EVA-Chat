@@ -12,94 +12,94 @@ import javafx.stage.Stage;
 
 public class Client  extends Application
 { 
- final static int ServerPort = 1234; 
+	final static int ServerPort = 1234; 
 
- public static void main(String args[]) throws UnknownHostException, IOException  
- { 
-	 launch(args);
-     Scanner scn = new Scanner(System.in); 
-       
-     // getting localhost ip 
+	public static void main(String args[]) throws UnknownHostException, IOException  
+	{ 
+		launch(args);
+		Scanner scn = new Scanner(System.in); 
 
-     InetAddress ip = InetAddress.getByName("localhost"); 
+		// getting localhost ip 
 
-       
-     // establish the connection 
-     Socket s = new Socket(ip, ServerPort); 
-       
-     // obtaining input and out streams 
-     DataInputStream dis = new DataInputStream(s.getInputStream()); 
-     DataOutputStream dos = new DataOutputStream(s.getOutputStream()); 
+		InetAddress ip = InetAddress.getByName("localhost"); 
 
-     // sendMessage thread 
-     Thread sendMessage = new Thread(new Runnable()  
-     { 
-         @Override
-         public void run() { 
-             while (true) { 
 
-                 // read the message to deliver. 
-                 String msg = scn.nextLine(); 
-                   
-                 try { 
-                     // write on the output stream 
-                     dos.writeUTF(msg); 
-                 } catch (IOException e) { 
-                     e.printStackTrace(); 
-                 } 
-             } 
-         } 
-     }); 
-       
-     // readMessage thread 
-     Thread readMessage = new Thread(new Runnable()  
-     { 
-         @Override
-         public void run() { 
+		// establish the connection 
+		Socket s = new Socket(ip, ServerPort); 
 
-             while (true) { 
-                 try { 
-                     // read the message sent to this client 
-                     String msg = dis.readUTF(); 
-                     System.out.println(msg); 
-                 } catch (IOException e) { 
+		// obtaining input and out streams 
+		DataInputStream dis = new DataInputStream(s.getInputStream()); 
+		DataOutputStream dos = new DataOutputStream(s.getOutputStream()); 
 
-                     e.printStackTrace(); 
-                 } 
-             } 
-         } 
-     }); 
+		// sendMessage thread 
+		Thread sendMessage = new Thread(new Runnable()  
+		{ 
+			@Override
+			public void run() { 
+				while (true) { 
 
-     sendMessage.start(); 
-     readMessage.start(); 
+					// read the message to deliver. 
+					String msg = scn.nextLine(); 
 
- } 
- 
- @Override
- public void start(Stage primaryStage) throws IOException {
-    // +++++++++++++++++++++++++++++++++++++++++++++
-    // Layout
-    // +++++++++++++++++++++++++++++++++++++++++++++
-     
-    // FXML-Datei laden!
-    Parent root = FXMLLoader.load(getClass().getResource("../gui/Chatroom.fxml"));
-      
-   // Szene
-   Scene scene = new Scene(root);
-    
-    // +++++++++++++++++++++++++++++++++++++++++++++
-    // Stage konfigurieren
-    // +++++++++++++++++++++++++++++++++++++++++++++
+					try { 
+						// write on the output stream 
+						dos.writeUTF(msg); 
+					} catch (IOException e) { 
+						e.printStackTrace(); 
+					} 
+				} 
+			} 
+		}); 
 
-    // Titel setzen
-   primaryStage.setTitle("AxxG - FXML Beispiel");
-    
-   // Szene setzen
-   primaryStage.setScene(scene);
-   primaryStage.sizeToScene();
-    
-   // Stage anzeigen
-   primaryStage.show();
-}
- 
+		// readMessage thread 
+		Thread readMessage = new Thread(new Runnable()  
+		{ 
+			@Override
+			public void run() { 
+
+				while (true) { 
+					try { 
+						// read the message sent to this client 
+						String msg = dis.readUTF(); 
+						System.out.println(msg); 
+					} catch (IOException e) { 
+
+						e.printStackTrace(); 
+					} 
+				} 
+			} 
+		}); 
+
+		sendMessage.start(); 
+		readMessage.start(); 
+
+	} 
+
+	@Override
+	public void start(Stage primaryStage) throws IOException {
+		// +++++++++++++++++++++++++++++++++++++++++++++
+		// Layout
+		// +++++++++++++++++++++++++++++++++++++++++++++
+
+		// FXML-Datei laden!
+		Parent root = FXMLLoader.load(getClass().getResource("../gui/Chatroom.fxml"));
+
+		// Szene
+		Scene scene = new Scene(root);
+
+		// +++++++++++++++++++++++++++++++++++++++++++++
+		// Stage konfigurieren
+		// +++++++++++++++++++++++++++++++++++++++++++++
+
+		// Titel setzen
+		primaryStage.setTitle("Chatroom");
+
+		// Szene setzen
+		primaryStage.setScene(scene);
+		primaryStage.sizeToScene();
+
+		// Stage anzeigen
+		primaryStage.show();
+	}
+
 } 
