@@ -7,6 +7,8 @@ import javafx.scene.text.Text;
 
 public class ChatroomController {
 	
+	boolean send =false;
+	
 	@FXML
 	protected TextArea tChatverlauf;
 	
@@ -21,11 +23,20 @@ public class ChatroomController {
 	
 	@FXML
 	protected void senden(MouseEvent event) {
-		lblAnzeigeName.setText("TestTestTEst");
-		tChatverlauf.setText(tEingabe.getText());
+		send=true;
 	}
 	public void setReceivedMessage(String receivedTxt) {
 		tChatverlauf.setText(receivedTxt);		
 		
+	}
+	
+	public synchronized boolean isSendClicked(){
+		
+		return send;
+	}
+	
+	public String getMessage() {
+		send=false;
+		return tEingabe.getText();
 	}
 }
