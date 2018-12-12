@@ -91,7 +91,8 @@ class ClientHandler implements Runnable
 		String timeStamp ;
 
 		String received; 
-		while (true) 
+		boolean keepGoing =true;
+		while (keepGoing) 
 		{ 
 			try
 			{ 
@@ -125,8 +126,11 @@ class ClientHandler implements Runnable
 					} 
 				} 
 			} catch (IOException e) { 
-				
-				e.printStackTrace(); 
+				Server.ar.remove(this);
+				System.out.println("Client removed: "+this.name);
+				keepGoing =false;
+				continue;
+			
 			} 
 		}//while
 		
