@@ -92,7 +92,7 @@ class ClientHandler implements Runnable
 			try
 			{ 
 				// receive the string 
-				received = dis.readUTF(); 
+				received = dis.readUTF();
 				
 				System.out.println(received); 
 				
