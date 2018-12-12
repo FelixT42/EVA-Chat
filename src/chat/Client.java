@@ -7,7 +7,7 @@ import java.util.Scanner;
 import gui.ChatroomController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
+
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage; 
@@ -61,7 +61,7 @@ public class Client  extends Application
 
 		// getting localhost ip 
 		//IP adress from the server
-		InetAddress ip = InetAddress.getByName("localhost"); 
+		InetAddress ip = InetAddress.getByName("192.168.178.63"); 
 
 		// establish the connection 
 		Socket s = new Socket(ip, ServerPort); 

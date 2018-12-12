@@ -27,6 +27,7 @@ public class ChatroomController {
 	}
 	public synchronized void setReceivedMessage(String receivedTxt) {
 		tChatverlauf.setText(receivedTxt);		
+		
 	}
 	
 	public synchronized boolean isSendClicked(){
