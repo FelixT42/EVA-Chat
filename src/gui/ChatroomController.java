@@ -1,4 +1,5 @@
 package gui;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -7,7 +8,7 @@ import javafx.scene.text.Text;
 
 public class ChatroomController {
 	
-	boolean send =false;
+	boolean send = false;
 	
 	@FXML
 	protected TextArea tChatverlauf;
@@ -26,17 +27,18 @@ public class ChatroomController {
 		send=true;
 	}
 	public synchronized void setReceivedMessage(String receivedTxt) {
-		tChatverlauf.setText(receivedTxt);		
 		
+		tChatverlauf.appendText(receivedTxt+"\n");	
 	}
 	
-	public  boolean isSendClicked(){
+	public synchronized boolean isSendClicked(){
 		
 		return send;
 	}
 	
 	public String getMessage() {
 		send=false;
+		tChatverlauf.appendText(tEingabe.getText()+"\n");
 		return tEingabe.getText();
 	}
 }

@@ -51,7 +51,7 @@ public class Client  extends Application
 		// +++++++++++++++++++++++++++++++++++++++++++++
 
 		// Titel setzen
-		primaryStage.setTitle("AxxG - FXML Beispiel");
+		primaryStage.setTitle("Masse Chat");
 		// Szene setzen
 		primaryStage.setScene(scene);
 		primaryStage.sizeToScene();
@@ -61,7 +61,7 @@ public class Client  extends Application
 
 		// getting localhost ip 
 		//IP adress from the server
-		InetAddress ip = InetAddress.getByName("localhost"); 
+		InetAddress ip = InetAddress.getByName("192.168.178.85"); 
 
 		// establish the connection 
 		Socket s = new Socket(ip, ServerPort); 
@@ -131,7 +131,6 @@ public class Client  extends Application
 						// read the message sent to this client 
 						String msg = dis.readUTF(); 
 						cc.setReceivedMessage(msg);
-						System.out.println(msg); 
 					} catch (IOException e) { 
 
 						e.printStackTrace(); 

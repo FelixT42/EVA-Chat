@@ -6,7 +6,8 @@ package chat;
 
 import java.io.*; 
 import java.util.*; 
-import java.net.*; 
+import java.net.*;
+import java.text.SimpleDateFormat; 
 
 //Server class 
 public class Server 
@@ -87,6 +88,7 @@ class ClientHandler implements Runnable
 
 	@Override
 	public void run() { 
+		String timeStamp ;
 
 		String received; 
 		while (true) 
@@ -117,7 +119,8 @@ class ClientHandler implements Runnable
 					// output stream 
 					if (mc.name.equals(recipient) && mc.isloggedin==true) 
 					{ 
-						mc.dos.writeUTF(this.name+" : "+MsgToSend); 
+						timeStamp = new SimpleDateFormat("ddMMyyyy_HHmmss").format(Calendar.getInstance().getTime());
+						mc.dos.writeUTF("Am "+timeStamp+" schrieb "+this.name+" : \n"+MsgToSend); 
 						break; 
 					} 
 				} 
