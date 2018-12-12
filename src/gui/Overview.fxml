@@ -8,7 +8,7 @@
 <?import javafx.scene.text.Font?>
 
 
-<AnchorPane prefHeight="583.0" prefWidth="279.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/10.0.1">
+<AnchorPane prefHeight="583.0" prefWidth="279.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/10.0.1" fx:controller="OverviewController">
    <children>
       <TextArea layoutX="36.0" layoutY="108.0" prefHeight="37.0" prefWidth="208.0" />
       <Label layoutX="96.0" layoutY="145.0" text="Online">
@@ -21,8 +21,8 @@
             <Font size="17.0" />
          </font>
       </Label>
-      <Button layoutX="36.0" layoutY="488.0" mnemonicParsing="false" prefHeight="45.0" prefWidth="208.0" text="Logout" />
-      <ListView fx:id="lstOnlineUser" layoutX="23.0" layoutY="204.0" prefHeight="236.0" prefWidth="234.0" />
+      <Button fx:id="btnLogout" layoutX="36.0" layoutY="488.0" mnemonicParsing="false" onAction="#logout" prefHeight="45.0" prefWidth="208.0" text="Logout" />
+      <ListView fx:id="lstOnline" layoutX="23.0" layoutY="204.0" prefHeight="236.0" prefWidth="234.0" />
       <Label fx:id="lblUsername" layoutX="52.0" layoutY="14.0" text="Username">
          <font>
             <Font size="42.0" />

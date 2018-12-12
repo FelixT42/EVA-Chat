@@ -18,13 +18,11 @@ public class Client  extends Application
  { 
 	 launch(args);
      Scanner scn = new Scanner(System.in); 
-       
+
      // getting localhost ip 
      //IP adress from the server
      InetAddress ip = InetAddress.getByName("localhost"); 
 
-    
-     
      // establish the connection 
      Socket s = new Socket(ip, ServerPort); 
        
@@ -34,6 +32,7 @@ public class Client  extends Application
      
      
   // username thread 
+     /*
      Thread sendUsername = new Thread(new Runnable()  
      { 
          @Override
@@ -42,7 +41,7 @@ public class Client  extends Application
 
                  // read the message to deliver. 
             	 String username = scn.nextLine(); 
-            	 username=username+"##*";
+            	 
                    
                  try { 
                      // write on the output stream 
@@ -53,7 +52,7 @@ public class Client  extends Application
              } 
          } 
      });
-
+*/
      // sendMessage thread 
      Thread sendMessage = new Thread(new Runnable()  
      { 
@@ -92,7 +91,7 @@ public class Client  extends Application
              } 
          } 
      }); 
-     sendUsername.start();
+     //sendUsername.start();
      sendMessage.start(); 
      readMessage.start(); 
 
@@ -105,7 +104,7 @@ public class Client  extends Application
     // +++++++++++++++++++++++++++++++++++++++++++++
      
     // FXML-Datei laden!
-    Parent root = FXMLLoader.load(getClass().getResource("../gui/Chatroom.fxml"));
+    Parent root = FXMLLoader.load(getClass().getResource("../gui/Overview.fxml"));
       
    // Szene
    Scene scene = new Scene(root);
