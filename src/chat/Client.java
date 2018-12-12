@@ -2,14 +2,21 @@ package chat;
 
 import java.io.*; 
 import java.net.*; 
-import java.util.Scanner; 
+import java.util.Scanner;
 
-public class Client  
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage; 
+
+public class Client  extends Application
 { 
  final static int ServerPort = 1234; 
 
  public static void main(String args[]) throws UnknownHostException, IOException  
  { 
+	 launch(args);
      Scanner scn = new Scanner(System.in); 
        
      // getting localhost ip 
@@ -90,4 +97,32 @@ public class Client
      readMessage.start(); 
 
  } 
+ 
+ @Override
+ public void start(Stage primaryStage) throws IOException {
+    // +++++++++++++++++++++++++++++++++++++++++++++
+    // Layout
+    // +++++++++++++++++++++++++++++++++++++++++++++
+     
+    // FXML-Datei laden!
+    Parent root = FXMLLoader.load(getClass().getResource("../gui/Chatroom.fxml"));
+      
+   // Szene
+   Scene scene = new Scene(root);
+    
+    // +++++++++++++++++++++++++++++++++++++++++++++
+    // Stage konfigurieren
+    // +++++++++++++++++++++++++++++++++++++++++++++
+
+    // Titel setzen
+   primaryStage.setTitle("AxxG - FXML Beispiel");
+    
+   // Szene setzen
+   primaryStage.setScene(scene);
+   primaryStage.sizeToScene();
+    
+   // Stage anzeigen
+   primaryStage.show();
+}
+ 
 } 
