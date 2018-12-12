@@ -16,6 +16,7 @@ public class Client  extends Application
 { 
 
 	final static int ServerPort = 1234; 
+	DataOutputStream dos;
 
 	public static void main(String args[]) throws UnknownHostException, IOException  
 	{ 
@@ -23,6 +24,10 @@ public class Client  extends Application
 
 
 	} 
+	
+	public void sendMessage(String message) {
+		
+	}
 
 	@Override
 	public void start(Stage primaryStage) throws IOException {
@@ -63,7 +68,7 @@ public class Client  extends Application
 
 		// obtaining input and out streams 
 		DataInputStream dis = new DataInputStream(s.getInputStream()); 
-		DataOutputStream dos = new DataOutputStream(s.getOutputStream()); 
+		dos = new DataOutputStream(s.getOutputStream()); 
 
 
 		
@@ -96,18 +101,21 @@ public class Client  extends Application
 		Thread sendMessage = new Thread(new Runnable()  
 		{ 
 			@Override
-			public void run() { 
+			public void run(){ 
 				while (true) { 
+					
+					if (cc.isSendClicked()) {
 
-					// read the message to deliver. 
-					String msg = scn.nextLine(); 
+						try { 
+							// write on the output stream 
+							dos.writeUTF(cc.getMessage()); 
+						} catch (IOException e) { 
+							e.printStackTrace(); 
+						} 
+					}
+						
 
-					try { 
-						// write on the output stream 
-						dos.writeUTF(msg); 
-					} catch (IOException e) { 
-						e.printStackTrace(); 
-					} 
+					
 				} 
 			} 
 		}); 
