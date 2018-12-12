@@ -20,7 +20,9 @@ public class Client  extends Application
      Scanner scn = new Scanner(System.in); 
        
      // getting localhost ip 
-     InetAddress ip = InetAddress.getByName("192.168.178.62"); 
+
+     InetAddress ip = InetAddress.getByName("localhost"); 
+
        
      // establish the connection 
      Socket s = new Socket(ip, ServerPort); 
