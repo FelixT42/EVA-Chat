@@ -30,7 +30,7 @@ public class ChatroomController {
 		
 	}
 	
-	public synchronized boolean isSendClicked(){
+	public  boolean isSendClicked(){
 		
 		return send;
 	}
