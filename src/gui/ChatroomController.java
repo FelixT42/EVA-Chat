@@ -26,5 +26,6 @@ public class ChatroomController {
 	}
 	public void setReceivedMessage(String receivedTxt) {
 		tChatverlauf.setText(receivedTxt);		
+		
 	}
 }
