@@ -30,8 +30,10 @@ public class Server
 		while (true) 
 		{ 
 			// Accept the incoming request 
+			//accept blocks bis verbindung aufgebaut
 			s = ss.accept(); 
 			System.out.println("Server: "); 
+			// in s steht Socket mit IP und Port des Clients
 			System.out.println("New client request received : " + s); 
 			
 			// obtain input and output streams 
@@ -92,7 +94,7 @@ class ClientHandler implements Runnable
 			try
 			{ 
 				// receive the string 
-				received = dis.readUTF(); 
+				received = dis.readUTF();
 				
 				System.out.println(received); 
 				
@@ -123,8 +125,8 @@ class ClientHandler implements Runnable
 				
 				e.printStackTrace(); 
 			} 
-			
-		} 
+		}//while
+		
 		try
 		{ 
 			// closing resources 

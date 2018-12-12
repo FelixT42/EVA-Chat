@@ -13,16 +13,39 @@ public class Client
      Scanner scn = new Scanner(System.in); 
        
      // getting localhost ip 
-
+     //IP adress from the server
      InetAddress ip = InetAddress.getByName("localhost"); 
 
-       
+    
+     
      // establish the connection 
      Socket s = new Socket(ip, ServerPort); 
        
      // obtaining input and out streams 
      DataInputStream dis = new DataInputStream(s.getInputStream()); 
      DataOutputStream dos = new DataOutputStream(s.getOutputStream()); 
+     
+     
+  // username thread 
+     Thread sendUsername = new Thread(new Runnable()  
+     { 
+         @Override
+         public void run() { 
+             while (true) { 
+
+                 // read the message to deliver. 
+            	 String username = scn.nextLine(); 
+            	 username=username+"##*";
+                   
+                 try { 
+                     // write on the output stream 
+                     dos.writeUTF(username); 
+                 } catch (IOException e) { 
+                     e.printStackTrace(); 
+                 } 
+             } 
+         } 
+     });
 
      // sendMessage thread 
      Thread sendMessage = new Thread(new Runnable()  
@@ -62,7 +85,7 @@ public class Client
              } 
          } 
      }); 
-
+     sendUsername.start();
      sendMessage.start(); 
      readMessage.start(); 
 
