@@ -7,21 +7,21 @@
 <?import javafx.scene.text.Text?>
 
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.ChatroomController">
    <children>
-      <TextArea id="tEingabe" layoutX="14.0" layoutY="270.0" prefHeight="116.0" prefWidth="450.0" />
-      <TextArea id="tChatverlauf" editable="false" layoutX="14.0" layoutY="58.0" prefHeight="202.0" prefWidth="450.0" />
-      <Text id="lblName" layoutX="34.0" layoutY="37.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Name:  " wrappingWidth="73.13671875">
+      <TextArea fx:id="tEingabe" layoutX="14.0" layoutY="270.0" prefHeight="116.0" prefWidth="450.0" />
+      <TextArea fx:id="tChatverlauf" editable="false" layoutX="14.0" layoutY="58.0" prefHeight="202.0" prefWidth="450.0" />
+      <Text layoutX="34.0" layoutY="37.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Name:  " wrappingWidth="73.13671875">
          <font>
             <Font size="18.0" />
          </font>
       </Text>
-      <Text id="lblAnzeigeName" layoutX="132.0" layoutY="36.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" wrappingWidth="106.205078125">
+      <Text fx:id="lblAnzeigeName" layoutX="132.0" layoutY="36.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" wrappingWidth="106.205078125">
          <font>
             <Font size="18.0" />
          </font>
       </Text>
-      <Button id="btnSenden" layoutX="480.0" layoutY="303.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="106.0" text="Senden">
+      <Button fx:id="btnSenden" layoutX="480.0" layoutY="303.0" mnemonicParsing="false" onMouseClicked="#senden" prefHeight="50.0" prefWidth="106.0" text="Senden">
          <font>
             <Font size="22.0" />
          </font>

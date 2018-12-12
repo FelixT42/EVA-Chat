@@ -12,27 +12,28 @@ import javafx.stage.Stage;
 
 public class Client  extends Application
 { 
- final static int ServerPort = 1234; 
 
- public static void main(String args[]) throws UnknownHostException, IOException  
- { 
-	 launch(args);
-     Scanner scn = new Scanner(System.in); 
+	final static int ServerPort = 1234; 
 
-     // getting localhost ip 
-     //IP adress from the server
-     InetAddress ip = InetAddress.getByName("localhost"); 
+	public static void main(String args[]) throws UnknownHostException, IOException  
+	{ 
+		launch(args);
+		Scanner scn = new Scanner(System.in); 
 
-     // establish the connection 
-     Socket s = new Socket(ip, ServerPort); 
-       
-     // obtaining input and out streams 
-     DataInputStream dis = new DataInputStream(s.getInputStream()); 
-     DataOutputStream dos = new DataOutputStream(s.getOutputStream()); 
-     
-     
-  // username thread 
-     /*
+		// getting localhost ip 
+		//IP adress from the server
+		InetAddress ip = InetAddress.getByName("localhost"); 
+
+		// establish the connection 
+		Socket s = new Socket(ip, ServerPort); 
+
+		// obtaining input and out streams 
+		DataInputStream dis = new DataInputStream(s.getInputStream()); 
+		DataOutputStream dos = new DataOutputStream(s.getOutputStream()); 
+
+
+		// username thread 
+		/*
      Thread sendUsername = new Thread(new Runnable()  
      { 
          @Override
@@ -41,8 +42,8 @@ public class Client  extends Application
 
                  // read the message to deliver. 
             	 String username = scn.nextLine(); 
-            	 
-                   
+
+
                  try { 
                      // write on the output stream 
                      dos.writeUTF(username); 
@@ -52,76 +53,76 @@ public class Client  extends Application
              } 
          } 
      });
-*/
-     // sendMessage thread 
-     Thread sendMessage = new Thread(new Runnable()  
-     { 
-         @Override
-         public void run() { 
-             while (true) { 
+		 */
+		// sendMessage thread 
+		Thread sendMessage = new Thread(new Runnable()  
+		{ 
+			@Override
+			public void run() { 
+				while (true) { 
 
-                 // read the message to deliver. 
-                 String msg = scn.nextLine(); 
-                   
-                 try { 
-                     // write on the output stream 
-                     dos.writeUTF(msg); 
-                 } catch (IOException e) { 
-                     e.printStackTrace(); 
-                 } 
-             } 
-         } 
-     }); 
-       
-     // readMessage thread 
-     Thread readMessage = new Thread(new Runnable()  
-     { 
-         @Override
-         public void run() { 
+					// read the message to deliver. 
+					String msg = scn.nextLine(); 
 
-             while (true) { 
-                 try { 
-                     // read the message sent to this client 
-                     String msg = dis.readUTF(); 
-                     System.out.println(msg); 
-                 } catch (IOException e) { 
+					try { 
+						// write on the output stream 
+						dos.writeUTF(msg); 
+					} catch (IOException e) { 
+						e.printStackTrace(); 
+					} 
+				} 
+			} 
+		}); 
 
-                     e.printStackTrace(); 
-                 } 
-             } 
-         } 
-     }); 
-     //sendUsername.start();
-     sendMessage.start(); 
-     readMessage.start(); 
+		// readMessage thread 
+		Thread readMessage = new Thread(new Runnable()  
+		{ 
+			@Override
+			public void run() { 
 
- } 
- 
- @Override
- public void start(Stage primaryStage) throws IOException {
-    // +++++++++++++++++++++++++++++++++++++++++++++
-    // Layout
-    // +++++++++++++++++++++++++++++++++++++++++++++
-     
-    // FXML-Datei laden!
-    Parent root = FXMLLoader.load(getClass().getResource("../gui/Overview.fxml"));
-      
-   // Szene
-   Scene scene = new Scene(root);
-    
-    // +++++++++++++++++++++++++++++++++++++++++++++
-    // Stage konfigurieren
-    // +++++++++++++++++++++++++++++++++++++++++++++
+				while (true) { 
+					try { 
+						// read the message sent to this client 
+						String msg = dis.readUTF(); 
+						System.out.println(msg); 
+					} catch (IOException e) { 
 
-    // Titel setzen
-   primaryStage.setTitle("AxxG - FXML Beispiel");
-    
-   // Szene setzen
-   primaryStage.setScene(scene);
-   primaryStage.sizeToScene();
-    
-   // Stage anzeigen
-   primaryStage.show();
-}
- 
+						e.printStackTrace(); 
+					} 
+				} 
+			} 
+		}); 
+		//sendUsername.start();
+		sendMessage.start(); 
+		readMessage.start(); 
+
+	} 
+
+	@Override
+	public void start(Stage primaryStage) throws IOException {
+		// +++++++++++++++++++++++++++++++++++++++++++++
+		// Layout
+		// +++++++++++++++++++++++++++++++++++++++++++++
+
+		// FXML-Datei laden!
+		Parent root = FXMLLoader.load(getClass().getResource("../gui/Overview.fxml"));
+
+		// Szene
+		Scene scene = new Scene(root);
+
+		// +++++++++++++++++++++++++++++++++++++++++++++
+		// Stage konfigurieren
+		// +++++++++++++++++++++++++++++++++++++++++++++
+
+		// Titel setzen
+		primaryStage.setTitle("AxxG - FXML Beispiel");
+
+		// Szene setzen
+		primaryStage.setScene(scene);
+		primaryStage.sizeToScene();
+
+		// Stage anzeigen
+		primaryStage.show();
+	}
+
 } 
