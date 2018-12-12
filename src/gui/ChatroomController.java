@@ -1,5 +1,8 @@
 package gui;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -8,6 +11,7 @@ import javafx.scene.text.Text;
 
 public class ChatroomController {
 	
+	String timeStamp;
 	boolean send = false;
 	
 	@FXML
@@ -37,8 +41,10 @@ public class ChatroomController {
 	}
 	
 	public String getMessage() {
+		timeStamp = new SimpleDateFormat("dd.MM.yyyy_HH:mm:ss").format(Calendar.getInstance().getTime());
+		//hier muss noch der teil mit der raute rausgeholt werden
+		tChatverlauf.appendText("Am "+timeStamp+" schrieb ich : \n"+tEingabe.getText()+"\n");
 		send=false;
-		tChatverlauf.appendText(tEingabe.getText()+"\n");
 		return tEingabe.getText();
 	}
 }
