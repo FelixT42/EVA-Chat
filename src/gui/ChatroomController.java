@@ -24,5 +24,7 @@ public class ChatroomController {
 		lblAnzeigeName.setText("TestTestTEst");
 		tChatverlauf.setText(tEingabe.getText());
 	}
-
+	public void setReceivedMessage(String receivedTxt) {
+		tChatverlauf.setText(receivedTxt);		
+	}
 }

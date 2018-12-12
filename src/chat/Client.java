@@ -4,10 +4,12 @@ import java.io.*;
 import java.net.*; 
 import java.util.Scanner;
 
+import gui.ChatroomController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage; 
 
 public class Client  extends Application
@@ -18,6 +20,38 @@ public class Client  extends Application
 	public static void main(String args[]) throws UnknownHostException, IOException  
 	{ 
 		launch(args);
+
+
+	} 
+
+	@Override
+	public void start(Stage primaryStage) throws IOException {
+		// +++++++++++++++++++++++++++++++++++++++++++++
+		// Layout
+		// +++++++++++++++++++++++++++++++++++++++++++++
+
+		
+		
+		// Load FXML file and AnchorPane
+		FXMLLoader loader = new FXMLLoader(Client.class.getResource("../gui/Chatroom.fxml"));
+		AnchorPane pane = loader.load();
+
+		// Szene
+		Scene scene = new Scene(pane);
+		//create Maincontroller
+		ChatroomController cc = loader.getController();
+		
+		// +++++++++++++++++++++++++++++++++++++++++++++
+		// Stage konfigurieren
+		// +++++++++++++++++++++++++++++++++++++++++++++
+
+		// Titel setzen
+		primaryStage.setTitle("AxxG - FXML Beispiel");
+		// Szene setzen
+		primaryStage.setScene(scene);
+		primaryStage.sizeToScene();
+		// Stage anzeigen
+		primaryStage.show();
 		Scanner scn = new Scanner(System.in); 
 
 		// getting localhost ip 
@@ -31,6 +65,10 @@ public class Client  extends Application
 		DataInputStream dis = new DataInputStream(s.getInputStream()); 
 		DataOutputStream dos = new DataOutputStream(s.getOutputStream()); 
 
+
+		
+	
+		
 
 		// username thread 
 		/*
@@ -84,6 +122,7 @@ public class Client  extends Application
 					try { 
 						// read the message sent to this client 
 						String msg = dis.readUTF(); 
+						cc.setReceivedMessage(msg);
 						System.out.println(msg); 
 					} catch (IOException e) { 
 
@@ -95,34 +134,6 @@ public class Client  extends Application
 		//sendUsername.start();
 		sendMessage.start(); 
 		readMessage.start(); 
-
-	} 
-
-	@Override
-	public void start(Stage primaryStage) throws IOException {
-		// +++++++++++++++++++++++++++++++++++++++++++++
-		// Layout
-		// +++++++++++++++++++++++++++++++++++++++++++++
-
-		// FXML-Datei laden!
-		Parent root = FXMLLoader.load(getClass().getResource("../gui/Overview.fxml"));
-
-		// Szene
-		Scene scene = new Scene(root);
-
-		// +++++++++++++++++++++++++++++++++++++++++++++
-		// Stage konfigurieren
-		// +++++++++++++++++++++++++++++++++++++++++++++
-
-		// Titel setzen
-		primaryStage.setTitle("AxxG - FXML Beispiel");
-
-		// Szene setzen
-		primaryStage.setScene(scene);
-		primaryStage.sizeToScene();
-
-		// Stage anzeigen
-		primaryStage.show();
 	}
 
 } 
