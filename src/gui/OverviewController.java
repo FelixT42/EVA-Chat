@@ -1,4 +1,8 @@
 package gui;
+import java.util.StringTokenizer;
+import chat.Client;
+
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -6,6 +10,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
 
 public class OverviewController {
+	
+	String lastClickedUser="";
+	
 	@FXML
 	private ListView lstOnline;
 
@@ -18,6 +25,45 @@ public class OverviewController {
 	protected void logout(ActionEvent event) {
 		lblUsername.setText("Test");
 	}
+
+	@FXML
+	protected void clickOnOnlineList(MouseEvent event) {
+		
+		//Nur auf Doppelklick reagieren. Dazu dient lastClickedUser
+		String user = (String) lstOnline.getSelectionModel().getSelectedItem();
+		if(user.equals(lastClickedUser)) {
+			System.out.println(user);
+			Client.openChatroom(user);
+			lastClickedUser="";
+		}
+		else
+			lastClickedUser=user;
+		
+	}
+	
+	// Füllt die Liste der Angemeldeten Benutzer
+	public void updateOnlineUsers(String onlineUsers) {
+		//runLater sorgt dafür das änderungen der UI auch in einem Thread gemacht werden können
+		Platform.runLater(new Runnable() {
+			@Override public void run() {
+				lstOnline.getItems().clear();
+				StringTokenizer st = new StringTokenizer(onlineUsers, "###"); 
+				while(st.hasMoreTokens()) {
+					lstOnline.getItems().add(st.nextToken());
+				}
+			}
+		});
+	}
+	
+	public void setLabelUsername(String name) {
+		Platform.runLater(new Runnable() {
+			@Override public void run() {
+				lblUsername.setText(name);
+			}
+		});
+		
+	}
+	
 }
 
 

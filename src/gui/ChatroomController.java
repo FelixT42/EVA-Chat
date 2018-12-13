@@ -13,6 +13,7 @@ public class ChatroomController {
 	
 	String timeStamp;
 	boolean send = false;
+	String chatpartner;
 	
 	@FXML
 	protected TextArea tChatverlauf;
@@ -31,12 +32,10 @@ public class ChatroomController {
 		send=true;
 	}
 	public synchronized void setReceivedMessage(String receivedTxt) {
-		
 		tChatverlauf.appendText(receivedTxt+"\n");	
 	}
 	
 	public synchronized boolean isSendClicked(){
-		
 		return send;
 	}
 	
@@ -46,5 +45,10 @@ public class ChatroomController {
 		tChatverlauf.appendText("Am "+timeStamp+" schrieb ich : \n"+tEingabe.getText()+"\n");
 		send=false;
 		return tEingabe.getText();
+	}
+	
+	public void setChatpartner(String name) {
+		this.lblAnzeigeName.setText(name);
+		this.chatpartner = name;
 	}
 }

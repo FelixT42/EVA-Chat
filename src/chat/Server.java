@@ -107,24 +107,47 @@ class ClientHandler implements Runnable
 					break; 
 				} 
 				
-				// break the string into message and recipient part 
-				StringTokenizer st = new StringTokenizer(received, "#"); 
-				String MsgToSend = st.nextToken(); 
-				String recipient = st.nextToken(); 
+				boolean isMessage = true;
+				
+				//Übertragen aller angemeldeter User
+				if(received.equals("getConnectedUsernames")) {
+					String usernames = Server.ar.elementAt(0).name;
+					for (int i=1; i<Server.ar.size();i++) {
+						usernames+="###"+Server.ar.elementAt(i).name;
+					}
+					System.out.println(usernames);
+					this.dos.writeUTF(usernames);
+					isMessage = false;
+				}
+				
+				//Übertragen des eigenen Usernamens
+				if(received.equals("getOwnUsername")) {
+					this.dos.writeUTF(this.name);
+					isMessage = false;
+				}
+				
+				// Wenn keine Nachrticht sonder ein Steuerbefehl übertragen wird, wird dieser Teil übersprungen
+				if(isMessage) {
+					// break the string into message and recipient part 
+					StringTokenizer st = new StringTokenizer(received, "#"); 
+					String MsgToSend = st.nextToken(); 
+					String recipient = st.nextToken(); 
 
-				// search for the recipient in the connected devices list. 
-				// ar is the vector storing client of active users 
-				for (ClientHandler mc : Server.ar) 
-				{ 
-					// if the recipient is found, write on its 
-					// output stream 
-					if (mc.name.equals(recipient) && mc.isloggedin==true) 
+					// search for the recipient in the connected devices list. 
+					// ar is the vector storing client of active users 
+					for (ClientHandler mc : Server.ar) 
 					{ 
-						timeStamp = new SimpleDateFormat("dd.MM.yyyy_HH:mm:ss").format(Calendar.getInstance().getTime());
-						mc.dos.writeUTF("Am "+timeStamp+" schrieb "+this.name+" : \n"+MsgToSend); 
-						break; 
+						// if the recipient is found, write on its 
+						// output stream 
+						if (mc.name.equals(recipient) && mc.isloggedin==true) 
+						{ 
+							timeStamp = new SimpleDateFormat("dd.MM.yyyy_HH:mm:ss").format(Calendar.getInstance().getTime());
+							mc.dos.writeUTF("Am "+timeStamp+" schrieb "+this.name+" : \n"+MsgToSend); 
+							break; 
+						} 
 					} 
-				} 
+				}
+				
 			} catch (IOException e) { 
 				Server.ar.remove(this);
 				System.out.println("Client removed: "+this.name);
