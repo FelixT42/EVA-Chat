@@ -43,7 +43,8 @@ public class Server
 			// obtain input and output streams 
 			DataInputStream dis = new DataInputStream(s.getInputStream()); 
 			DataOutputStream dos = new DataOutputStream(s.getOutputStream()); 
-
+			
+			//control data stream
 			DataInputStream cdis = new DataInputStream(cs.getInputStream()); 
 			DataOutputStream cdos = new DataOutputStream(cs.getOutputStream()); 
 
