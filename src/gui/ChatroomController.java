@@ -11,40 +11,47 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
 
 public class ChatroomController {
-	
+
 	String timeStamp;
 	boolean send = false;
 	String chatpartner;
-	
+
 	@FXML
 	protected TextArea tChatverlauf;
-	
+
 	@FXML
 	protected TextArea tEingabe;
-	
+
 	@FXML 
 	private Button btnSenden;
-	
+
 	@FXML 
 	private Text lblAnzeigeName;
-	
+
 	@FXML
 	protected void senden(MouseEvent event) {
 		send=true;
 	}
-	public synchronized void setReceivedMessage(String receivedTxt) {
-		Platform.runLater(new Runnable() {
-			@Override public void run() {
-				tChatverlauf.appendText(receivedTxt+"\n");
-			}
-		});
-			
+	public synchronized boolean setReceivedMessage(String receivedTxt) {
+
+		String username = receivedTxt.substring(31, receivedTxt.indexOf(':',31)-1);
+		if(username.equals(chatpartner)) {
+			Platform.runLater(new Runnable() {
+				@Override public void run() {
+					tChatverlauf.appendText(receivedTxt+"\n");	
+				}
+			});
+			return true;
+		}
+		return false;
 	}
-	
+
+
+
 	public synchronized boolean isSendClicked(){
 		return send;
 	}
-	
+
 	public String getMessage() {
 		timeStamp = new SimpleDateFormat("dd.MM.yyyy_HH:mm:ss").format(Calendar.getInstance().getTime());
 		//hier muss noch der teil mit der raute rausgeholt werden
@@ -54,9 +61,12 @@ public class ChatroomController {
 		tEingabe.clear();
 		return text;
 	}
-	
+
 	public void setChatpartner(String name) {
 		this.lblAnzeigeName.setText(name);
 		this.chatpartner = name;
+	}
+	public String getChatpartner() {
+		return chatpartner;
 	}
 }

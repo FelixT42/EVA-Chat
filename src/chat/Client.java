@@ -1,7 +1,10 @@
 package chat;
 
 import java.io.*; 
-import java.net.*; 
+import java.net.*;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 import java.util.concurrent.TimeUnit;
@@ -29,6 +32,8 @@ public class Client  extends Application
 	static DataOutputStream cdos;
 	static String username = "masse";
 
+	static List<ChatroomController>ccl = Collections.synchronizedList(new LinkedList<ChatroomController>());
+	static List<String>oldMessages = Collections.synchronizedList(new LinkedList<String>());
 
 	public static void main(String args[]) throws UnknownHostException, IOException  
 	{ 
@@ -128,9 +133,9 @@ public class Client  extends Application
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
 						} 
-						 
-						
-						
+
+
+
 						Platform.runLater(new Runnable() {
 							@Override public void run() {
 								Alert alert = new Alert(AlertType.INFORMATION);
@@ -141,10 +146,7 @@ public class Client  extends Application
 								alert.showAndWait();
 								System.exit(0);
 							}
-						});
-						
-						
-						
+						});	
 					}
 
 					// 5 Sekunden warten damit der Server nicht mit Anfragen überhäuft wird.
@@ -160,6 +162,72 @@ public class Client  extends Application
 		});
 		updateOnlineUsers.start();
 
+
+		Thread sendMessage = new Thread(new Runnable()  
+		{ 
+			@Override
+			public void run(){ 
+				while (true) { 
+					for(int i=0; i<ccl.size();i++) {
+						if (ccl.get(i).isSendClicked()) {
+
+							try { 
+								// write on the output stream 
+								dos.writeUTF(ccl.get(i).getMessage()+"#"+ccl.get(i).getChatpartner()); 
+							} catch (IOException e) { 
+								e.printStackTrace(); 
+							} 
+						}
+					}
+
+				} 
+			} 
+		}); 
+
+		// readMessage thread 
+		Thread readMessage = new Thread(new Runnable()  
+		{ 
+			@Override
+			public void run() { 
+
+				while (true) { 
+					try { 
+						// read the message sent to this client 
+						String msg = dis.readUTF(); 
+						System.out.println(msg);
+						if(ccl.isEmpty()) {
+							oldMessages.add(msg);
+
+						}
+
+						for(ChatroomController cc:ccl) {
+							System.out.println("");
+
+							if(!cc.setReceivedMessage(msg)) {
+								oldMessages.add(msg);
+							}
+						}
+
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						System.out.println("Server Connection Lost. Reader");
+						try {
+							dis.close();
+							dos.close();
+							cdis.close();
+							cdos.close();
+						} catch (IOException e1) {
+							System.out.println("Problem with Closing the Connection.");
+							continue;
+						} 
+
+						continue;
+					} 
+				} 
+			} 
+		}); 
+		sendMessage.start(); 
+		readMessage.start();
 
 		// username thread 
 		/*
@@ -197,58 +265,14 @@ public class Client  extends Application
 			newWindow.show();
 			ChatroomController cc = loader.getController();
 			cc.setChatpartner(user);
+			ccl.add(cc);
 
-			Thread sendMessage = new Thread(new Runnable()  
-			{ 
-				@Override
-				public void run(){ 
-					while (true) { 
+			for(int i=0;i<oldMessages.size();i++) {
+				if(cc.setReceivedMessage(oldMessages.get(i)))
+					oldMessages.remove(oldMessages.get(i));
+			}
 
-						if (cc.isSendClicked()) {
 
-							try { 
-								// write on the output stream 
-								dos.writeUTF(cc.getMessage()+"#"+user); 
-							} catch (IOException e) { 
-								e.printStackTrace(); 
-							} 
-						}
-					} 
-				} 
-			}); 
-
-			// readMessage thread 
-			Thread readMessage = new Thread(new Runnable()  
-			{ 
-				@Override
-				public void run() { 
-
-					while (true) { 
-						try { 
-							// read the message sent to this client 
-							String msg = dis.readUTF(); 
-							System.out.println(msg);
-							cc.setReceivedMessage(msg);
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							System.out.println("Server Connection Lost. Reader");
-							try {
-								dis.close();
-								dos.close();
-								cdis.close();
-								cdos.close();
-							} catch (IOException e1) {
-								System.out.println("Problem with Closing the Connection.");
-								continue;
-							} 
-							 
-							continue;
-						} 
-					} 
-				} 
-			}); 
-			sendMessage.start(); 
-			readMessage.start();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -258,8 +282,8 @@ public class Client  extends Application
 
 	@Override
 	public void stop(){
-	    System.out.println("Stage is closing");
-	    System.exit(0);
+		System.out.println("Programm wird beendet");
+		System.exit(0);
 	}
-	
+
 } 
