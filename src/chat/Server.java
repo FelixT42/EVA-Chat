@@ -101,7 +101,8 @@ class ClientHandler implements Runnable
 		{ 
 			@Override
 			public void run() { 
-				while(true) {
+				boolean keepGoing =true;
+				while (keepGoing) {
 					try {
 						String controllMessage = cdis.readUTF();
 
@@ -111,7 +112,7 @@ class ClientHandler implements Runnable
 							for (int i=1; i<Server.ar.size();i++) {
 								usernames+="###"+Server.ar.elementAt(i).name;
 							}
-							System.out.println(usernames);
+							
 							cdos.writeUTF(usernames);
 
 						}
@@ -123,7 +124,20 @@ class ClientHandler implements Runnable
 
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
-						e.printStackTrace();
+						Server.ar.remove(this);
+						System.out.println("Client removed: "+name);
+						keepGoing =false;
+						try {
+							dis.close();
+							dos.close();
+							cdis.close();
+							cdos.close();
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							continue;
+						} 
+						 
+						continue;
 					}
 				}
 			}
@@ -135,9 +149,6 @@ class ClientHandler implements Runnable
 	@Override
 	public void run() { 
 		String timeStamp ;
-
-
-
 		String received; 
 		boolean keepGoing =true;
 		while (keepGoing) 
