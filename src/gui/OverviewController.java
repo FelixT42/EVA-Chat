@@ -12,6 +12,7 @@ import javafx.scene.text.Text;
 public class OverviewController {
 	
 	String lastClickedUser="nobody";
+	String userName;
 	
 	@FXML
 	private ListView lstOnline;
@@ -46,10 +47,14 @@ public class OverviewController {
 		//runLater sorgt dafür das änderungen der UI auch in einem Thread gemacht werden können
 		Platform.runLater(new Runnable() {
 			@Override public void run() {
+				String otherUserName;
 				lstOnline.getItems().clear();
 				StringTokenizer st = new StringTokenizer(onlineUsers, "###"); 
 				while(st.hasMoreTokens()) {
-					lstOnline.getItems().add(st.nextToken());
+					otherUserName = st.nextToken();
+					if (!otherUserName.equals(userName)) {
+						lstOnline.getItems().add(otherUserName);
+					}
 				}
 			}
 		});
@@ -58,6 +63,7 @@ public class OverviewController {
 	public void setLabelUsername(String name) {
 		Platform.runLater(new Runnable() {
 			@Override public void run() {
+				userName = name;
 				lblUsername.setText(name);
 			}
 		});

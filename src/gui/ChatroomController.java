@@ -50,7 +50,9 @@ public class ChatroomController {
 		//hier muss noch der teil mit der raute rausgeholt werden
 		tChatverlauf.appendText("Am "+timeStamp+" schrieb ich : \n"+tEingabe.getText()+"\n");
 		send=false;
-		return tEingabe.getText();
+		String text = tEingabe.getText();
+		tEingabe.clear();
+		return text;
 	}
 	
 	public void setChatpartner(String name) {

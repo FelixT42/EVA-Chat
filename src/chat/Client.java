@@ -24,7 +24,7 @@ public class Client  extends Application
 	static DataOutputStream dos;
 	static DataInputStream cdis;
 	static DataOutputStream cdos;
-	
+
 
 	public static void main(String args[]) throws UnknownHostException, IOException  
 	{ 
@@ -32,9 +32,9 @@ public class Client  extends Application
 
 
 	} 
-	
+
 	public void sendMessage(String message) {
-		
+
 	}
 
 	@Override
@@ -43,8 +43,8 @@ public class Client  extends Application
 		// Layout
 		// +++++++++++++++++++++++++++++++++++++++++++++
 
-		
-		
+
+
 		// Load FXML file and AnchorPane
 		FXMLLoader loader = new FXMLLoader(Client.class.getResource("../gui/Overview.fxml"));
 		AnchorPane pane = loader.load();
@@ -52,9 +52,9 @@ public class Client  extends Application
 		// Szene
 		Scene scene = new Scene(pane);
 		//create Maincontroller
-//		
+		//		
 		OverviewController oc = loader.getController();
-		
+
 		// +++++++++++++++++++++++++++++++++++++++++++++
 		// Stage konfigurieren
 		// +++++++++++++++++++++++++++++++++++++++++++++
@@ -82,40 +82,43 @@ public class Client  extends Application
 
 		cdis = new DataInputStream(controllSock.getInputStream()); 
 		cdos = new DataOutputStream(controllSock.getOutputStream());
-		
-     Thread updateOnlineUsers = new Thread(new Runnable()  
-     { 
-         @Override
-         public void run() { 
-        	 
-             while (true) {
-            	 
-            	 try {
-					cdos.writeUTF("getConnectedUsernames");
-					String onlineUsers = cdis.readUTF();
-					oc.updateOnlineUsers(onlineUsers);
-					
-					cdos.writeUTF("getOwnUsername");
-					oc.setLabelUsername(cdis.readUTF());
-					
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-            	 
-            	 // 5 Sekunden warten damit der Server nicht mit Anfragen überhäuft wird.
-            	 try {
-					TimeUnit.SECONDS.sleep(5);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
 
-             } 
-         } 
-     });
-     updateOnlineUsers.start();
-		
+		Thread updateOnlineUsers = new Thread(new Runnable()  
+		{ 
+			@Override
+			public void run() { 
+
+				while (true) {
+
+					try {
+
+						cdos.writeUTF("getOwnUsername");
+						oc.setLabelUsername(cdis.readUTF());
+
+
+						cdos.writeUTF("getConnectedUsernames");
+						String onlineUsers = cdis.readUTF();
+						oc.updateOnlineUsers(onlineUsers);
+
+
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+					// 5 Sekunden warten damit der Server nicht mit Anfragen überhäuft wird.
+					try {
+						TimeUnit.SECONDS.sleep(5);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+				} 
+			} 
+		});
+		updateOnlineUsers.start();
+
 
 		// username thread 
 		/*
@@ -139,55 +142,11 @@ public class Client  extends Application
          } 
      });
 		 */
-		// sendMessage thread 
-/*		Thread sendMessage = new Thread(new Runnable()  
-		{ 
-			@Override
-			public void run(){ 
-				while (true) { 
-					
-					if (cc.isSendClicked()) {
-
-						try { 
-							// write on the output stream 
-							dos.writeUTF(cc.getMessage()); 
-						} catch (IOException e) { 
-							e.printStackTrace(); 
-						} 
-					}
-						
-
-					
-				} 
-			} 
-		}); 
-
-		// readMessage thread 
-		Thread readMessage = new Thread(new Runnable()  
-		{ 
-			@Override
-			public void run() { 
-
-				while (true) { 
-					try { 
-						// read the message sent to this client 
-						String msg = dis.readUTF(); 
-						cc.setReceivedMessage(msg);
-					} catch (IOException e) { 
-
-						e.printStackTrace(); 
-					} 
-				} 
-			} 
-		}); 
-		//sendUsername.start();
-		sendMessage.start(); 
-		readMessage.start(); */
 	}
-	
+
 	public static void openChatroom(String user){
 		FXMLLoader loader = new FXMLLoader(Client.class.getResource("../gui/Chatroom.fxml"));
-		
+
 		try {
 			AnchorPane secondaryLayout = loader.load();
 			Scene chatroomScene= new Scene(secondaryLayout);
@@ -197,13 +156,13 @@ public class Client  extends Application
 			newWindow.show();
 			ChatroomController cc = loader.getController();
 			cc.setChatpartner(user);
-			
+
 			Thread sendMessage = new Thread(new Runnable()  
 			{ 
 				@Override
 				public void run(){ 
 					while (true) { 
-						
+
 						if (cc.isSendClicked()) {
 
 							try { 
@@ -241,8 +200,8 @@ public class Client  extends Application
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		
+
+
 	}
 
 } 
