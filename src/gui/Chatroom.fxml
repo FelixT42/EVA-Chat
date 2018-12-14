@@ -11,7 +11,7 @@
    <children>
       <TextArea fx:id="tEingabe" layoutX="14.0" layoutY="270.0" prefHeight="116.0" prefWidth="450.0" />
       <TextArea fx:id="tChatverlauf" editable="false" layoutX="14.0" layoutY="58.0" prefHeight="202.0" prefWidth="450.0" />
-      <Text layoutX="34.0" layoutY="37.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Name:  " wrappingWidth="73.13671875">
+      <Text layoutX="34.0" layoutY="37.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Chatroom mit " wrappingWidth="73.13671875">
          <font>
             <Font size="18.0" />
          </font>
