@@ -30,9 +30,9 @@ public class Client  extends Application
 	static DataOutputStream dos;
 	static DataInputStream cdis;
 	static DataOutputStream cdos;
-	
-	static List<ChatroomController>ccl = Collections.synchronizedList(new LinkedList<ChatroomController>());
 
+	static List<ChatroomController>ccl = Collections.synchronizedList(new LinkedList<ChatroomController>());
+	static List<String>oldMessages = Collections.synchronizedList(new LinkedList<String>());
 
 	public static void main(String args[]) throws UnknownHostException, IOException  
 	{ 
@@ -124,9 +124,9 @@ public class Client  extends Application
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
 						} 
-						 
-						
-						
+
+
+
 						Platform.runLater(new Runnable() {
 							@Override public void run() {
 								Alert alert = new Alert(AlertType.INFORMATION);
@@ -153,7 +153,7 @@ public class Client  extends Application
 		});
 		updateOnlineUsers.start();
 
-		
+
 		Thread sendMessage = new Thread(new Runnable()  
 		{ 
 			@Override
@@ -161,7 +161,7 @@ public class Client  extends Application
 				while (true) { 
 					for(int i=0; i<ccl.size();i++) {
 						if (ccl.get(i).isSendClicked()) {
-							
+
 							try { 
 								// write on the output stream 
 								dos.writeUTF(ccl.get(i).getMessage()+"#"+ccl.get(i).getChatpartner()); 
@@ -170,7 +170,7 @@ public class Client  extends Application
 							} 
 						}
 					}
-					
+
 				} 
 			} 
 		}); 
@@ -186,10 +186,19 @@ public class Client  extends Application
 						// read the message sent to this client 
 						String msg = dis.readUTF(); 
 						System.out.println(msg);
-						for(ChatroomController cc:ccl) {
-							cc.setReceivedMessage(msg);
+						if(ccl.isEmpty()) {
+							oldMessages.add(msg);
+
 						}
-						
+
+						for(ChatroomController cc:ccl) {
+							System.out.println("");
+
+							if(!cc.setReceivedMessage(msg)) {
+								oldMessages.add(msg);
+							}
+						}
+
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						System.out.println("Server Connection Lost. Reader");
@@ -202,7 +211,7 @@ public class Client  extends Application
 							System.out.println("Problem with Closing the Connection.");
 							continue;
 						} 
-						 
+
 						continue;
 					} 
 				} 
@@ -248,7 +257,13 @@ public class Client  extends Application
 			ChatroomController cc = loader.getController();
 			cc.setChatpartner(user);
 			ccl.add(cc);
-			
+
+			for(int i=0;i<oldMessages.size();i++) {
+				if(cc.setReceivedMessage(oldMessages.get(i)))
+					oldMessages.remove(oldMessages.get(i));
+			}
+
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -258,8 +273,8 @@ public class Client  extends Application
 
 	@Override
 	public void stop(){
-	    System.out.println("Programm wird beendet");
-	    System.exit(0);
+		System.out.println("Programm wird beendet");
+		System.exit(0);
 	}
-	
+
 } 
