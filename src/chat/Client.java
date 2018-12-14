@@ -70,7 +70,7 @@ public class Client  extends Application
 
 		// getting localhost ip 
 		//IP adress from the server
-		InetAddress ip = InetAddress.getByName("192.168.178.63"); 
+		InetAddress ip = InetAddress.getByName("192.168.178.85"); 
 
 		// establish the connection 
 		Socket s = new Socket(ip, ServerPort); 
