@@ -70,6 +70,11 @@ public class OverviewController {
 		
 	}
 	
+	@FXML
+	public void exitApplication(ActionEvent event) {
+	   Platform.exit();
+	}
+	
 }
 
 
