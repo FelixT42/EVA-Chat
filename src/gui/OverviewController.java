@@ -11,7 +11,7 @@ import javafx.scene.text.Text;
 
 public class OverviewController {
 	
-	String lastClickedUser="";
+	String lastClickedUser="nobody";
 	
 	@FXML
 	private ListView lstOnline;
@@ -34,7 +34,7 @@ public class OverviewController {
 		if(user.equals(lastClickedUser)) {
 			System.out.println(user);
 			Client.openChatroom(user);
-			lastClickedUser="";
+			lastClickedUser="nobody";
 		}
 		else
 			lastClickedUser=user;

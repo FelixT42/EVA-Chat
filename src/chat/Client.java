@@ -22,6 +22,8 @@ public class Client  extends Application
 	final static int ServerPort = 1234; 
 	static DataInputStream dis;
 	static DataOutputStream dos;
+	static DataInputStream cdis;
+	static DataOutputStream cdos;
 	
 
 	public static void main(String args[]) throws UnknownHostException, IOException  
@@ -72,26 +74,29 @@ public class Client  extends Application
 
 		// establish the connection 
 		Socket s = new Socket(ip, ServerPort); 
+		Socket controllSock = new Socket(ip, ServerPort);
 
 		// obtaining input and out streams 
 		dis = new DataInputStream(s.getInputStream()); 
 		dos = new DataOutputStream(s.getOutputStream()); 
 
-
-	
+		cdis = new DataInputStream(controllSock.getInputStream()); 
+		cdos = new DataOutputStream(controllSock.getOutputStream());
 		
      Thread updateOnlineUsers = new Thread(new Runnable()  
      { 
          @Override
          public void run() { 
-             while (true) { 
+        	 
+             while (true) {
+            	 
             	 try {
-					dos.writeUTF("getConnectedUsernames");
-					String onlineUsers = dis.readUTF();
+					cdos.writeUTF("getConnectedUsernames");
+					String onlineUsers = cdis.readUTF();
 					oc.updateOnlineUsers(onlineUsers);
 					
-					dos.writeUTF("getOwnUsername");
-					oc.setLabelUsername(dis.readUTF());
+					cdos.writeUTF("getOwnUsername");
+					oc.setLabelUsername(cdis.readUTF());
 					
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
@@ -100,7 +105,7 @@ public class Client  extends Application
             	 
             	 // 5 Sekunden warten damit der Server nicht mit Anfragen überhäuft wird.
             	 try {
-					TimeUnit.SECONDS.sleep(10);
+					TimeUnit.SECONDS.sleep(5);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -222,6 +227,7 @@ public class Client  extends Application
 						try { 
 							// read the message sent to this client 
 							String msg = dis.readUTF(); 
+							System.out.println(msg);
 							cc.setReceivedMessage(msg);
 						} catch (IOException e) { 
 

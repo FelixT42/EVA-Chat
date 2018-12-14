@@ -3,6 +3,7 @@ package gui;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -32,7 +33,12 @@ public class ChatroomController {
 		send=true;
 	}
 	public synchronized void setReceivedMessage(String receivedTxt) {
-		tChatverlauf.appendText(receivedTxt+"\n");	
+		Platform.runLater(new Runnable() {
+			@Override public void run() {
+				tChatverlauf.appendText(receivedTxt+"\n");
+			}
+		});
+			
 	}
 	
 	public synchronized boolean isSendClicked(){

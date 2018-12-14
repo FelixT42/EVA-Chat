@@ -5,7 +5,8 @@ package chat;
 //Save file as Server.java 
 
 import java.io.*; 
-import java.util.*; 
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.net.*;
 import java.text.SimpleDateFormat; 
 
@@ -15,7 +16,7 @@ public class Server
 
 	// Vector to store active clients 
 	static Vector<ClientHandler> ar = new Vector<>(); 
-	
+
 	// counter for clients 
 	static int i = 0; 
 
@@ -23,9 +24,10 @@ public class Server
 	{ 
 		// server is listening on port 1234 
 		ServerSocket ss = new ServerSocket(1234); 
-		
+
 		Socket s; 
-		
+		Socket cs;
+
 		// running infinite loop for getting 
 		// client request 
 		while (true) 
@@ -33,22 +35,26 @@ public class Server
 			// Accept the incoming request 
 			//accept blocks bis verbindung aufgebaut
 			s = ss.accept(); 
+			cs =ss.accept();
 			System.out.println("Server: "); 
 			// in s steht Socket mit IP und Port des Clients
 			System.out.println("New client request received : " + s); 
-			
+
 			// obtain input and output streams 
 			DataInputStream dis = new DataInputStream(s.getInputStream()); 
 			DataOutputStream dos = new DataOutputStream(s.getOutputStream()); 
-			
+
+			DataInputStream cdis = new DataInputStream(cs.getInputStream()); 
+			DataOutputStream cdos = new DataOutputStream(cs.getOutputStream()); 
+
 			System.out.println("Creating a new handler for this client..."); 
 
 			// Create a new handler object for handling this request. 
-			ClientHandler mtch = new ClientHandler(s,"client " + i, dis, dos); 
+			ClientHandler mtch = new ClientHandler(s,"client " + i, dis, dos,cdis,cdos); 
 
 			// Create a new Thread with this object. 
 			Thread t = new Thread(mtch); 
-			
+
 			System.out.println("Adding this client to active client list"); 
 
 			// add this client to active clients list 
@@ -73,22 +79,63 @@ class ClientHandler implements Runnable
 	private String name; 
 	final DataInputStream dis; 
 	final DataOutputStream dos; 
+	final DataInputStream cdis; 
+	final DataOutputStream cdos; 
 	Socket s; 
 	boolean isloggedin; 
-	
+
 	// constructor 
 	public ClientHandler(Socket s, String name, 
-							DataInputStream dis, DataOutputStream dos) { 
+			DataInputStream dis, DataOutputStream dos,DataInputStream cdis, DataOutputStream cdos) { 
 		this.dis = dis; 
 		this.dos = dos; 
 		this.name = name; 
 		this.s = s; 
 		this.isloggedin=true; 
+		this.cdis = cdis;
+		this.cdos=cdos;
+
+
+		Thread getControllMessages = new Thread(new Runnable()  
+		{ 
+			@Override
+			public void run() { 
+				while(true) {
+					try {
+						String controllMessage = cdis.readUTF();
+
+						//Übertragen aller angemeldeter User
+						if(controllMessage.equals("getConnectedUsernames")) {
+							String usernames = Server.ar.elementAt(0).name;
+							for (int i=1; i<Server.ar.size();i++) {
+								usernames+="###"+Server.ar.elementAt(i).name;
+							}
+							System.out.println(usernames);
+							cdos.writeUTF(usernames);
+
+						}
+
+						//Übertragen des eigenen Usernamens
+						if(controllMessage.equals("getOwnUsername")) {
+							cdos.writeUTF(name);
+						}
+
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+		});
+		getControllMessages.start();
+
 	} 
 
 	@Override
 	public void run() { 
 		String timeStamp ;
+
+
 
 		String received; 
 		boolean keepGoing =true;
@@ -98,41 +145,24 @@ class ClientHandler implements Runnable
 			{ 
 				// receive the string 
 				received = dis.readUTF();
-				
+
 				System.out.println(received); 
-				
+
 				if(received.equals("logout")){ 
 					this.isloggedin=false; 
 					this.s.close(); 
 					break; 
 				} 
-				
+
 				boolean isMessage = true;
-				
-				//Übertragen aller angemeldeter User
-				if(received.equals("getConnectedUsernames")) {
-					String usernames = Server.ar.elementAt(0).name;
-					for (int i=1; i<Server.ar.size();i++) {
-						usernames+="###"+Server.ar.elementAt(i).name;
-					}
-					System.out.println(usernames);
-					this.dos.writeUTF(usernames);
-					isMessage = false;
-				}
-				
-				//Übertragen des eigenen Usernamens
-				if(received.equals("getOwnUsername")) {
-					this.dos.writeUTF(this.name);
-					isMessage = false;
-				}
-				
+
+
 				// Wenn keine Nachrticht sonder ein Steuerbefehl übertragen wird, wird dieser Teil übersprungen
 				if(isMessage) {
 					// break the string into message and recipient part 
 					StringTokenizer st = new StringTokenizer(received, "#"); 
 					String MsgToSend = st.nextToken(); 
 					String recipient = st.nextToken(); 
-
 					// search for the recipient in the connected devices list. 
 					// ar is the vector storing client of active users 
 					for (ClientHandler mc : Server.ar) 
@@ -147,22 +177,22 @@ class ClientHandler implements Runnable
 						} 
 					} 
 				}
-				
+
 			} catch (IOException e) { 
 				Server.ar.remove(this);
 				System.out.println("Client removed: "+this.name);
 				keepGoing =false;
 				continue;
-			
+
 			} 
 		}//while
-		
+
 		try
 		{ 
 			// closing resources 
 			this.dis.close(); 
 			this.dos.close(); 
-			
+
 		}catch(IOException e){ 
 			e.printStackTrace(); 
 		} 
