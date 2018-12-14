@@ -204,4 +204,10 @@ public class Client  extends Application
 
 	}
 
+	@Override
+	public void stop(){
+	    System.out.println("Stage is closing");
+	    System.exit(0);
+	}
+	
 } 
