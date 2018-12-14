@@ -35,7 +35,10 @@ public class ChatroomController {
 	public synchronized void setReceivedMessage(String receivedTxt) {
 		Platform.runLater(new Runnable() {
 			@Override public void run() {
-				tChatverlauf.appendText(receivedTxt+"\n");
+				
+				String username = receivedTxt.substring(31, receivedTxt.indexOf(':',31)-1);
+				if(username.equals(chatpartner)) 
+					tChatverlauf.appendText(receivedTxt+"\n");
 			}
 		});
 			
@@ -58,5 +61,8 @@ public class ChatroomController {
 	public void setChatpartner(String name) {
 		this.lblAnzeigeName.setText(name);
 		this.chatpartner = name;
+	}
+	public String getChatpartner() {
+		return chatpartner;
 	}
 }
