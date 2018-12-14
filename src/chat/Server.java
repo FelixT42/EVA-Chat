@@ -116,6 +116,26 @@ class ClientHandler implements Runnable
 							cdos.writeUTF(usernames);
 
 						}
+						
+						//Setzen des eigenen Usernamens
+						if(controllMessage.startsWith("setOwnUsername###")) {
+							StringTokenizer st = new StringTokenizer(controllMessage, "###"); 
+							//muss hier stehen um im nexten token username zu haben
+							st.nextToken(); 
+							String userName = st.nextToken();
+							String temp=st.nextToken();
+							System.out.println(temp);						
+							
+							for (int i=0; i<Server.ar.size();i++) {
+								if (Server.ar.elementAt(i).name.equals(temp)) {
+									Server.ar.elementAt(i).name=userName;
+								}
+							}
+							
+							
+							
+							cdos.writeUTF(userName);
+						}
 
 						//Übertragen des eigenen Usernamens
 						if(controllMessage.equals("getOwnUsername")) {

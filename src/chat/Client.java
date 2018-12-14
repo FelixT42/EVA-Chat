@@ -27,6 +27,7 @@ public class Client  extends Application
 	static DataOutputStream dos;
 	static DataInputStream cdis;
 	static DataOutputStream cdos;
+	static String username = "masse";
 
 
 	public static void main(String args[]) throws UnknownHostException, IOException  
@@ -73,7 +74,7 @@ public class Client  extends Application
 
 		// getting localhost ip 
 		//IP adress from the server
-		InetAddress ip = InetAddress.getByName("192.168.178.85"); 
+		InetAddress ip = InetAddress.getByName("192.168.178.62"); 
 
 		// establish the connection 
 		Socket s = new Socket(ip, ServerPort); 
@@ -90,14 +91,22 @@ public class Client  extends Application
 		{ 
 			@Override
 			public void run() { 
-
+				boolean nameEingetragen =false;
 				while (true) {
 
 					try {
+						
+						
 
-						cdos.writeUTF("getOwnUsername");
-						oc.setLabelUsername(cdis.readUTF());
-
+						
+;
+						if(!nameEingetragen) {
+							cdos.writeUTF("getOwnUsername");
+							cdos.writeUTF("setOwnUsername###"+username+"###"+cdis.readUTF());
+							oc.setLabelUsername(cdis.readUTF());
+							nameEingetragen=true;
+						}
+						
 
 						cdos.writeUTF("getConnectedUsernames");
 						String onlineUsers = cdis.readUTF();
