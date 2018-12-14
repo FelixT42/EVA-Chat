@@ -9,9 +9,12 @@ import java.util.concurrent.TimeUnit;
 import gui.ChatroomController;
 import gui.OverviewController;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage; 
@@ -102,8 +105,37 @@ public class Client  extends Application
 
 
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						System.out.println(" ");
+						try {
+							dis.close();
+							dos.close();
+							cdis.close();
+							cdos.close();
+							TimeUnit.SECONDS.sleep(5);
+						} catch (IOException e1) {
+							System.out.println("Problem with Closing the Connection.");
+							continue;
+						} catch (InterruptedException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						} 
+						 
+						
+						
+						Platform.runLater(new Runnable() {
+							@Override public void run() {
+								Alert alert = new Alert(AlertType.INFORMATION);
+								alert.setTitle("Information Dialog");
+								alert.setHeaderText(null);
+								alert.setContentText("Server Connection Lost. Programm will be closed!");
+
+								alert.showAndWait();
+								System.exit(0);
+							}
+						});
+						
+						
+						
 					}
 
 					// 5 Sekunden warten damit der Server nicht mit Anfragen überhäuft wird.
@@ -188,9 +220,20 @@ public class Client  extends Application
 							String msg = dis.readUTF(); 
 							System.out.println(msg);
 							cc.setReceivedMessage(msg);
-						} catch (IOException e) { 
-
-							e.printStackTrace(); 
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							System.out.println("Server Connection Lost. Reader");
+							try {
+								dis.close();
+								dos.close();
+								cdis.close();
+								cdos.close();
+							} catch (IOException e1) {
+								System.out.println("Problem with Closing the Connection.");
+								continue;
+							} 
+							 
+							continue;
 						} 
 					} 
 				} 
