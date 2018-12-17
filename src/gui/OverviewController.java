@@ -32,7 +32,9 @@ public class OverviewController {
 		
 		//Nur auf Doppelklick reagieren. Dazu dient lastClickedUser
 		String user = (String) lstOnline.getSelectionModel().getSelectedItem();
-		if(user.equals(lastClickedUser)) {
+		
+		
+		if(user !=null && user.equals(lastClickedUser)) {
 			System.out.println(user);
 			Client.openChatroom(user);
 			lastClickedUser="nobody";
