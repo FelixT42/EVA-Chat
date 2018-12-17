@@ -49,7 +49,7 @@ public class Client  extends Application
 		// Layout
 		// +++++++++++++++++++++++++++++++++++++++++++++
 		// Load FXML file and AnchorPane
-		FXMLLoader loader = new FXMLLoader(Client.class.getResource("../gui/Overview.fxml"));
+		FXMLLoader loader = new FXMLLoader(Client.class.getResource("/gui/Overview.fxml"));
 		AnchorPane pane;
 		try {
 			pane = loader.load();
@@ -83,7 +83,7 @@ public class Client  extends Application
 		boolean noError =true;
 	
 		try {
-			ip = InetAddress.getByName("192.168.178.63");
+			ip = InetAddress.getByName("192.168.178.85");
 			
 			//Damit wird die Verbindung schneller geschlossen wenn der Server nicht erreichbar ist
 			if(!ip.isReachable(4000)) {
@@ -295,7 +295,7 @@ public class Client  extends Application
 	}
 
 	public static void openChatroom(String user){
-		FXMLLoader loader = new FXMLLoader(Client.class.getResource("../gui/Chatroom.fxml"));
+		FXMLLoader loader = new FXMLLoader(Client.class.getResource("/gui/Chatroom.fxml"));
 
 		try {
 			AnchorPane secondaryLayout = loader.load();
@@ -322,7 +322,7 @@ public class Client  extends Application
 		}
 	}
 	public static void openOverview(String user){
-		FXMLLoader loader = new FXMLLoader(Client.class.getResource("../gui/Overview.fxml"));
+		FXMLLoader loader = new FXMLLoader(Client.class.getResource("/gui/Overview.fxml"));
 
 		try {
 			AnchorPane secondaryLayout = loader.load();
