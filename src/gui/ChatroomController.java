@@ -33,7 +33,9 @@ public class ChatroomController {
 
 	@FXML
 	protected void senden(MouseEvent event) {
-		send=true;
+		
+		if(!tEingabe.getText().isEmpty())
+			send=true;
 	}
 	public synchronized boolean setReceivedMessage(String receivedTxt) {
 
