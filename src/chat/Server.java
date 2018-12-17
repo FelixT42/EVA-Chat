@@ -110,7 +110,7 @@ class ClientHandler implements Runnable
 						if(controllMessage.equals("getConnectedUsernames")) {
 							String usernames = Server.ar.elementAt(0).name;
 							for (int i=1; i<Server.ar.size();i++) {
-								usernames+="*#*"+Server.ar.elementAt(i).name;
+								usernames+="###"+Server.ar.elementAt(i).name;
 							}
 							
 							cdos.writeUTF(usernames);
@@ -118,8 +118,8 @@ class ClientHandler implements Runnable
 						}
 						
 						//Setzen des eigenen Usernamens
-						if(controllMessage.startsWith("setOwnUsername*#*")) {
-							StringTokenizer st = new StringTokenizer(controllMessage, "*#*"); 
+						if(controllMessage.startsWith("setOwnUsername###")) {
+							StringTokenizer st = new StringTokenizer(controllMessage, "###"); 
 							//muss hier stehen um im nexten token username zu haben
 							st.nextToken(); 
 							String userName = st.nextToken();
