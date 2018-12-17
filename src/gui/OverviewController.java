@@ -51,7 +51,7 @@ public class OverviewController {
 			@Override public void run() {		
 				String otherUserName;
 				lstOnline.getItems().clear();
-				StringTokenizer st = new StringTokenizer(onlineUsers, "*#*"); 
+				StringTokenizer st = new StringTokenizer(onlineUsers, "###"); 
 				while(st.hasMoreTokens()) {
 					otherUserName = st.nextToken();
 					if (!otherUserName.equals(userName)) {

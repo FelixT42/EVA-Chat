@@ -76,7 +76,7 @@ public class ChatroomController {
 	}
 	
 	public void isChatpartnerStillOnline(String onlineUsers) {
-		StringTokenizer st = new StringTokenizer(onlineUsers, "*#*"); 
+		StringTokenizer st = new StringTokenizer(onlineUsers, "###"); 
 		boolean match = false;	
 		while(st.hasMoreTokens() && !match) {
 			if(st.nextToken().equals(chatpartner)) {
