@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.StringTokenizer;
 import java.util.concurrent.TimeUnit;
 
 import gui.ChatroomController;
@@ -107,6 +108,7 @@ public class Client  extends Application
 
 			cdis = new DataInputStream(controllSock.getInputStream()); 
 			cdos = new DataOutputStream(controllSock.getOutputStream());
+			
 		} catch (IOException e) {
 			// Fehlerbehandlung wenn der Server nach 4 Sec nicht antwortet.
 			// Wenn noError auf false steht werden die lese und schreibe Threads nicht gestartet -> Beugt exeptions vor!

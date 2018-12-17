@@ -127,6 +127,12 @@ class ClientHandler implements Runnable
 							System.out.println(temp);						
 							
 							for (int i=0; i<Server.ar.size();i++) {
+								if (Server.ar.elementAt(i).name.equals(userName)) {
+									userName="Nicht angemeldet";
+									break;
+									
+								}
+								
 								if (Server.ar.elementAt(i).name.equals(temp)) {
 									Server.ar.elementAt(i).name=userName;
 								}
