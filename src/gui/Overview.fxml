@@ -13,7 +13,7 @@
          </font>
       </Label>
       <ListView fx:id="lstOnline" layoutX="23.0" layoutY="134.0" onMouseClicked="#clickOnOnlineList" prefHeight="236.0" prefWidth="234.0" />
-      <Label fx:id="lblUsername" layoutX="52.0" layoutY="14.0" text="Username">
+      <Label fx:id="lblUsername" alignment="CENTER" layoutX="52.0" layoutY="14.0" text="Username">
          <font>
             <Font size="42.0" />
          </font>
