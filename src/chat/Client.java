@@ -152,7 +152,7 @@ public class Client  extends Application
 
 						if(!nameEingetragen) {
 							cdos.writeUTF("getOwnUsername");
-							cdos.writeUTF("setOwnUsername###"+username+"###"+cdis.readUTF());
+							cdos.writeUTF("setOwnUsername*#*"+username+"*#*"+cdis.readUTF());
 							checkUsername = cdis.readUTF();
 							if(!checkUsername.equals(username)) {
 								Platform.runLater(new Runnable() {
