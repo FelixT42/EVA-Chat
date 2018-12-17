@@ -2,7 +2,9 @@ package gui;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.StringTokenizer;
 
+import chat.Client;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -15,7 +17,8 @@ public class ChatroomController {
 	String timeStamp;
 	boolean send = false;
 	String chatpartner;
-
+	boolean isOnline=true;
+	
 	@FXML
 	protected TextArea tChatverlauf;
 
@@ -69,4 +72,35 @@ public class ChatroomController {
 	public String getChatpartner() {
 		return chatpartner;
 	}
+	
+	public void isChatpartnerStillOnline(String onlineUsers) {
+		StringTokenizer st = new StringTokenizer(onlineUsers, "###"); 
+		boolean match = false;	
+		while(st.hasMoreTokens() && !match) {
+			if(st.nextToken().equals(chatpartner)) {
+				match = true;
+				break;
+			}	
+		}
+		
+		if(!match && isOnline) {
+			isOnline =false;
+			Platform.runLater(new Runnable() {
+				@Override public void run() {
+					tChatverlauf.appendText("\n Ihr Chatpartner hat den Chat verlassen! \n Alle ab jetzt gesendeten Nachrichten erreichen den Empfänger nicht mehr! \n ");	
+				}
+			});
+		}
+		if(match && !isOnline) {
+			isOnline =true;
+			Platform.runLater(new Runnable() {
+				@Override public void run() {
+					tChatverlauf.appendText("\n Ihr Chatpartner ist wieder Online \n \n ");	
+				}
+			});
+		}
+		
+		
+	}
+	
 }

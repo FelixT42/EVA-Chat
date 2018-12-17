@@ -46,7 +46,7 @@ public class OverviewController {
 	public void updateOnlineUsers(String onlineUsers) {
 		//runLater sorgt dafür das änderungen der UI auch in einem Thread gemacht werden können
 		Platform.runLater(new Runnable() {
-			@Override public void run() {
+			@Override public void run() {		
 				String otherUserName;
 				lstOnline.getItems().clear();
 				StringTokenizer st = new StringTokenizer(onlineUsers, "###"); 
