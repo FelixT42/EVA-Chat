@@ -6,7 +6,6 @@ package chat;
 
 import java.io.*; 
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.net.*;
 import java.text.SimpleDateFormat; 
 
@@ -14,69 +13,65 @@ import java.text.SimpleDateFormat;
 public class Server 
 { 
 
-	// Vector to store active clients 
-	static Vector<ClientHandler> ar = new Vector<>(); 
+	//Vector der alle angemeldeten Benutzer enthällt
+	static Vector<ClientHandler> clients = new Vector<>(); 
 
-	// counter for clients 
-	static int i = 0; 
+	//zähler für die Clients
+	static int i = 0;
+
+	private static ServerSocket ss; 
 
 	public static void main(String[] args) throws IOException 
 	{ 
-		// server is listening on port 1234 
-		ServerSocket ss = new ServerSocket(1234); 
+		//Server Socket mit Port erstellen 
+		ss = new ServerSocket(1234); 
 
 		Socket s; 
 		Socket cs;
 
-		// running infinite loop for getting 
-		// client request 
+		// warten auf einkommende verbindung
 		while (true) 
 		{ 
-			// Accept the incoming request 
-			//accept blocks bis verbindung aufgebaut
+			// Verbindung wird akzeptiert
 			s = ss.accept(); 
 			cs =ss.accept();
 			System.out.println("Server: "); 
 			// in s steht Socket mit IP und Port des Clients
 			System.out.println("New client request received : " + s); 
 
-			// obtain input and output streams 
+			//Input und output streams für die Nachrichtenübertragung
 			DataInputStream dis = new DataInputStream(s.getInputStream()); 
 			DataOutputStream dos = new DataOutputStream(s.getOutputStream()); 
-			
-			//control data stream
+
+			//Input und output streams für die Kontrolldatenübertragung
 			DataInputStream cdis = new DataInputStream(cs.getInputStream()); 
 			DataOutputStream cdos = new DataOutputStream(cs.getOutputStream()); 
 
 			System.out.println("Creating a new handler for this client..."); 
 
-			// Create a new handler object for handling this request. 
-			ClientHandler mtch = new ClientHandler(s,"client " + i, dis, dos,cdis,cdos); 
+			//neuer Clienthandler für jeden client
+			ClientHandler client = new ClientHandler(s,"client " + i, dis, dos,cdis,cdos); 
 
-			// Create a new Thread with this object. 
-			Thread t = new Thread(mtch); 
+			// neuer Thread mit diesem Client 
+			Thread thread = new Thread(client); 
 
 			System.out.println("Adding this client to active client list"); 
 
-			// add this client to active clients list 
-			ar.add(mtch); 
+			//Add Client zur Online Liste 
+			clients.add(client); 
 
-			// start the thread. 
-			t.start(); 
-
-			// increment i for new client. 
-			// i is used for naming only, and can be replaced 
-			// by any naming scheme 
+			// starte thread. 
+			thread.start(); 
+			//notwendig für Clientinitialisierung bevor username vorhanden ist
 			i++; 
 
 		} 
 	} 
 } 
 
-//ClientHandler class 
+//ClientHandler klasse
 class ClientHandler implements Runnable 
 { 
-	Scanner scn = new Scanner(System.in); 
 	private String name; 
 	final DataInputStream dis; 
 	final DataOutputStream dos; 
@@ -96,7 +91,7 @@ class ClientHandler implements Runnable
 		this.cdis = cdis;
 		this.cdos=cdos;
 
-
+		//Warten auf kontrollnachrichten
 		Thread getControllMessages = new Thread(new Runnable()  
 		{ 
 			@Override
@@ -108,15 +103,15 @@ class ClientHandler implements Runnable
 
 						//Übertragen aller angemeldeter User
 						if(controllMessage.equals("getConnectedUsernames")) {
-							String usernames = Server.ar.elementAt(0).name;
-							for (int i=1; i<Server.ar.size();i++) {
-								usernames+="###"+Server.ar.elementAt(i).name;
+							String usernames = Server.clients.elementAt(0).name;
+							for (int i=1; i<Server.clients.size();i++) {
+								usernames+="###"+Server.clients.elementAt(i).name;
 							}
-							
+
 							cdos.writeUTF(usernames);
 
 						}
-						
+
 						//Setzen des eigenen Usernamens
 						if(controllMessage.startsWith("setOwnUsername###")) {
 							StringTokenizer st = new StringTokenizer(controllMessage, "###"); 
@@ -125,21 +120,19 @@ class ClientHandler implements Runnable
 							String userName = st.nextToken();
 							String temp=st.nextToken();
 							System.out.println(temp);						
-							
-							for (int i=0; i<Server.ar.size();i++) {
-								if (Server.ar.elementAt(i).name.equals(userName)) {
+
+							for (int i=0; i<Server.clients.size();i++) {
+								if (Server.clients.elementAt(i).name.equals(userName)) {
 									userName="Nicht angemeldet";
 									break;
-									
+
 								}
-								
-								if (Server.ar.elementAt(i).name.equals(temp)) {
-									Server.ar.elementAt(i).name=userName;
+
+								if (Server.clients.elementAt(i).name.equals(temp)) {
+									Server.clients.elementAt(i).name=userName;
 								}
 							}
-							
-							
-							
+							//sende username zurück
 							cdos.writeUTF(userName);
 						}
 
@@ -150,7 +143,8 @@ class ClientHandler implements Runnable
 
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
-						Server.ar.remove(this);
+						Runnable runnable = this;
+						Server.clients.remove(runnable);
 						System.out.println("Client removed: "+name);
 						keepGoing =false;
 						try {
@@ -162,14 +156,13 @@ class ClientHandler implements Runnable
 							// TODO Auto-generated catch block
 							continue;
 						} 
-						 
+
 						continue;
 					}
 				}
 			}
 		});
 		getControllMessages.start();
-
 	} 
 
 	@Override
@@ -181,7 +174,7 @@ class ClientHandler implements Runnable
 		{ 
 			try
 			{ 
-				// receive the string 
+				//empfangener String
 				received = dis.readUTF();
 
 				System.out.println(received); 
@@ -191,9 +184,7 @@ class ClientHandler implements Runnable
 					this.s.close(); 
 					break; 
 				} 
-
 				boolean isMessage = true;
-
 
 				// Wenn keine Nachrticht sonder ein Steuerbefehl übertragen wird, wird dieser Teil übersprungen
 				if(isMessage) {
@@ -203,7 +194,7 @@ class ClientHandler implements Runnable
 					String recipient = st.nextToken(); 
 					// search for the recipient in the connected devices list. 
 					// ar is the vector storing client of active users 
-					for (ClientHandler mc : Server.ar) 
+					for (ClientHandler mc : Server.clients) 
 					{ 
 						// if the recipient is found, write on its 
 						// output stream 
@@ -217,7 +208,7 @@ class ClientHandler implements Runnable
 				}
 
 			} catch (IOException e) { 
-				Server.ar.remove(this);
+				Server.clients.remove(this);
 				System.out.println("Client removed: "+this.name);
 				keepGoing =false;
 				continue;

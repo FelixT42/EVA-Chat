@@ -7,7 +7,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.text.Text;
+
 
 public class OverviewController {
 	
@@ -15,7 +15,7 @@ public class OverviewController {
 	String userName;
 	
 	@FXML
-	private ListView lstOnline;
+	private ListView<String> lstOnline;
 
 	@FXML 
 	private Button btnLogout;
