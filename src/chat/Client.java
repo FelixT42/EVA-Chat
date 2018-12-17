@@ -233,7 +233,7 @@ public class Client  extends Application
 			public void run(){ 
 				while (true) { 
 					for(int i=0; i<ccl.size();i++) {
-						if (ccl.size()>0 &&ccl.get(i).isSendClicked()) {
+						if (ccl.get(i).isSendClicked()) {
 
 							try { 
 								// write on the output stream 
