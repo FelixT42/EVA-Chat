@@ -30,16 +30,14 @@ public class Client  extends Application
 	static DataOutputStream dos;
 	static DataInputStream cdis;
 	static DataOutputStream cdos;
-	static String username = "masse";
+	static String username = "felix1";
 
-	static List<ChatroomController>ccl = Collections.synchronizedList(new LinkedList<ChatroomController>());
+	public static List<ChatroomController>ccl = Collections.synchronizedList(new LinkedList<ChatroomController>());
 	static List<String>oldMessages = Collections.synchronizedList(new LinkedList<String>());
 
 	public static void main(String args[]) throws UnknownHostException, IOException  
 	{ 
 		launch(args);
-
-
 	} 
 
 	public void sendMessage(String message) {
@@ -47,50 +45,78 @@ public class Client  extends Application
 	}
 
 	@Override
-	public void start(Stage primaryStage) throws IOException {
+	public void start(Stage primaryStage) {
 		// +++++++++++++++++++++++++++++++++++++++++++++
 		// Layout
 		// +++++++++++++++++++++++++++++++++++++++++++++
-
-
-
 		// Load FXML file and AnchorPane
 		FXMLLoader loader = new FXMLLoader(Client.class.getResource("../gui/Overview.fxml"));
-		AnchorPane pane = loader.load();
-
-		// Szene
-		Scene scene = new Scene(pane);
+		AnchorPane pane;
+		try {
+			pane = loader.load();
+			
+			// +++++++++++++++++++++++++++++++++++++++++++++
+			// Stage konfigurieren
+			// +++++++++++++++++++++++++++++++++++++++++++++
+			// Szene
+			Scene scene = new Scene(pane);
+			// Titel setzen
+			primaryStage.setTitle("EVA-Chat");
+			// Szene setzen
+			primaryStage.setScene(scene);
+			primaryStage.sizeToScene();
+			// Stage anzeigen
+			primaryStage.show();
+		} catch (IOException e2) {
+			e2.printStackTrace();
+		}
+		
+		
 		//create Maincontroller
 		//		
 		OverviewController oc = loader.getController();
-
-		// +++++++++++++++++++++++++++++++++++++++++++++
-		// Stage konfigurieren
-		// +++++++++++++++++++++++++++++++++++++++++++++
-
-		// Titel setzen
-		primaryStage.setTitle("Masse Chat");
-		// Szene setzen
-		primaryStage.setScene(scene);
-		primaryStage.sizeToScene();
-		// Stage anzeigen
-		primaryStage.show();
 		Scanner scn = new Scanner(System.in); 
 
 		// getting localhost ip 
 		//IP adress from the server
-		InetAddress ip = InetAddress.getByName("192.168.178.62"); 
+		InetAddress ip;
+		boolean noError =true;
+	
+		try {
+			ip = InetAddress.getByName("192.168.178.63");
+			
+			//Damit wird die Verbindung schneller geschlossen wenn der Server nicht erreichbar ist
+			if(!ip.isReachable(4000)) {
+				throw new IOException("No Connection to Server");
+			}
+			Socket s = new Socket(ip, ServerPort); 
+			Socket controllSock = new Socket(ip, ServerPort);
+			
+			// obtaining input and out streams 
+			dis = new DataInputStream(s.getInputStream()); 
+			dos = new DataOutputStream(s.getOutputStream()); 
 
-		// establish the connection 
-		Socket s = new Socket(ip, ServerPort); 
-		Socket controllSock = new Socket(ip, ServerPort);
+			cdis = new DataInputStream(controllSock.getInputStream()); 
+			cdos = new DataOutputStream(controllSock.getOutputStream());
+		} catch (IOException e) {
+			// Fehlerbehandlung wenn der Server nach 4 Sec nicht antwortet.
+			// Wenn noError auf false steht werden die lese und schreibe Threads nicht gestartet -> Beugt exeptions vor!
+			noError=false;
+			Platform.runLater(new Runnable() {
+				@Override public void run() {
+					Alert alert = new Alert(AlertType.INFORMATION);
+					alert.setTitle("Information Dialog");
+					alert.setHeaderText(null);
+					alert.setContentText("Can´t connect to Server. Programm will be closed!");
 
-		// obtaining input and out streams 
-		dis = new DataInputStream(s.getInputStream()); 
-		dos = new DataOutputStream(s.getOutputStream()); 
-
-		cdis = new DataInputStream(controllSock.getInputStream()); 
-		cdos = new DataOutputStream(controllSock.getOutputStream());
+					alert.showAndWait();
+					System.exit(0);
+				}
+			});
+			
+		
+		} 
+		
 
 		Thread updateOnlineUsers = new Thread(new Runnable()  
 		{ 
@@ -100,23 +126,21 @@ public class Client  extends Application
 				while (true) {
 
 					try {
-						
-						
 
-						
-;
 						if(!nameEingetragen) {
 							cdos.writeUTF("getOwnUsername");
 							cdos.writeUTF("setOwnUsername###"+username+"###"+cdis.readUTF());
 							oc.setLabelUsername(cdis.readUTF());
 							nameEingetragen=true;
 						}
-						
+
 
 						cdos.writeUTF("getConnectedUsernames");
 						String onlineUsers = cdis.readUTF();
 						oc.updateOnlineUsers(onlineUsers);
-
+						for(ChatroomController cc:ccl) {
+							cc.isChatpartnerStillOnline(onlineUsers);
+						}
 
 					} catch (IOException e) {
 						System.out.println(" ");
@@ -133,8 +157,6 @@ public class Client  extends Application
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
 						} 
-
-
 
 						Platform.runLater(new Runnable() {
 							@Override public void run() {
@@ -160,7 +182,10 @@ public class Client  extends Application
 				} 
 			} 
 		});
-		updateOnlineUsers.start();
+		
+		
+		if(noError)
+			updateOnlineUsers.start();
 
 
 		Thread sendMessage = new Thread(new Runnable()  
@@ -197,7 +222,13 @@ public class Client  extends Application
 						System.out.println(msg);
 						if(ccl.isEmpty()) {
 							oldMessages.add(msg);
-
+							String username = msg.substring(31, msg.indexOf(':',31)-1);
+							Platform.runLater(new Runnable() {
+								@Override public void run() {
+									Client.openChatroom(username);	
+								}
+							});
+							
 						}
 
 						for(ChatroomController cc:ccl) {
@@ -205,6 +236,12 @@ public class Client  extends Application
 
 							if(!cc.setReceivedMessage(msg)) {
 								oldMessages.add(msg);
+								String username = msg.substring(31, msg.indexOf(':',31)-1);
+								Platform.runLater(new Runnable() {
+									@Override public void run() {
+										Client.openChatroom(username);	
+									}
+								});
 							}
 						}
 
@@ -226,8 +263,12 @@ public class Client  extends Application
 				} 
 			} 
 		}); 
-		sendMessage.start(); 
-		readMessage.start();
+		
+		if(noError) {
+			sendMessage.start(); 
+			readMessage.start();
+		}
+		
 
 		// username thread 
 		/*
@@ -262,11 +303,14 @@ public class Client  extends Application
 			Stage newWindow = new Stage();
 			newWindow.setTitle("Chatroom");
 			newWindow.setScene(chatroomScene);
+			
 			newWindow.show();
 			ChatroomController cc = loader.getController();
 			cc.setChatpartner(user);
 			ccl.add(cc);
-
+			newWindow.setOnCloseRequest( event->{
+				ccl.remove(cc);
+			});
 			for(int i=0;i<oldMessages.size();i++) {
 				if(cc.setReceivedMessage(oldMessages.get(i)))
 					oldMessages.remove(oldMessages.get(i));
@@ -276,8 +320,6 @@ public class Client  extends Application
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
-
 	}
 
 	@Override
