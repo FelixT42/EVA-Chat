@@ -5,8 +5,6 @@ import java.net.*;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Scanner;
-import java.util.StringTokenizer;
 import java.util.concurrent.TimeUnit;
 
 import gui.ChatroomController;
@@ -31,6 +29,9 @@ public class Client  extends Application
 	static DataOutputStream cdos;
 	static String username = "Nicht angemeldet";
 	static boolean connectionLost = false;
+	
+	static Socket s;
+	static Socket controllSock;
 
 	public static List<ChatroomController>ccl = Collections.synchronizedList(new LinkedList<ChatroomController>());
 	static List<String>oldMessages = Collections.synchronizedList(new LinkedList<String>());
@@ -68,7 +69,7 @@ public class Client  extends Application
 		// +++++++++++++++++++++++++++++++++++++++++++++
 		// Layout
 		// +++++++++++++++++++++++++++++++++++++++++++++
-		// Load FXML file and AnchorPane
+		// Laden der Fxml-Datei 
 		FXMLLoader loader = new FXMLLoader(Client.class.getResource("/gui/Overview.fxml"));
 		AnchorPane pane;
 		try {
@@ -91,31 +92,27 @@ public class Client  extends Application
 		}
 
 
-		//create Maincontroller
-		//		
+		//OverviewController laden
 		OverviewController oc = loader.getController();
-		Scanner scn = new Scanner(System.in); 
-
-		// getting localhost ip 
-		//IP adress from the server
-
-		InetAddress ip;
+		
 		boolean noError =true;
 
 		try {
-			ip = InetAddress.getByName("192.168.178.85");
+			// Ip-Adresse des Servers
+			InetAddress ip = InetAddress.getByName("192.168.178.85");
 
 			//Damit wird die Verbindung schneller geschlossen wenn der Server nicht erreichbar ist
 			if(!ip.isReachable(4000)) {
 				throw new IOException("No Connection to Server");
 			}
-			Socket s = new Socket(ip, ServerPort); 
-			Socket controllSock = new Socket(ip, ServerPort);
+			s = new Socket(ip, ServerPort); 
+			controllSock = new Socket(ip, ServerPort);
 
-			// obtaining input and out streams 
+			// Datastreams für die übertragung von Nachrichten
 			dis = new DataInputStream(s.getInputStream()); 
 			dos = new DataOutputStream(s.getOutputStream()); 
 
+			// Datastreams für die übertragung von Steuerdaten
 			cdis = new DataInputStream(controllSock.getInputStream()); 
 			cdos = new DataOutputStream(controllSock.getOutputStream());
 			
@@ -134,22 +131,15 @@ public class Client  extends Application
 					System.exit(0);
 				}
 			});
-
-
 		} 
-
-
 		Thread updateOnlineUsers = new Thread(new Runnable()  
 		{ 
 			@Override
 			public void run() { 
-				boolean nameEingetragen =false;
-				
+				boolean nameEingetragen =false;				
 				String checkUsername;
 				while (true) {
-
 					try {
-
 						if(!nameEingetragen) {
 							cdos.writeUTF("getOwnUsername");
 							cdos.writeUTF("setOwnUsername*#*"+username+"*#*"+cdis.readUTF());
@@ -170,8 +160,6 @@ public class Client  extends Application
 							oc.setLabelUsername(checkUsername);
 							nameEingetragen=true;
 						}
-
-
 						cdos.writeUTF("getConnectedUsernames");
 						String onlineUsers = cdis.readUTF();
 						oc.updateOnlineUsers(onlineUsers);
@@ -185,6 +173,8 @@ public class Client  extends Application
 							dos.close();
 							cdis.close();
 							cdos.close();
+							s.close();
+							controllSock.close();
 							TimeUnit.SECONDS.sleep(5);
 						} catch (IOException e1) {
 							System.out.println("Problem with Closing the Connection.");
@@ -214,7 +204,6 @@ public class Client  extends Application
 					try {
 						TimeUnit.SECONDS.sleep(5);
 					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 
@@ -233,7 +222,7 @@ public class Client  extends Application
 			public void run(){ 
 				while (true) { 
 					for(int i=0; i<ccl.size();i++) {
-						if (ccl.get(i).isSendClicked()) {
+						if (ccl.size()>0 && ccl.get(i).isSendClicked()) {
 
 							try { 
 								// write on the output stream 
@@ -285,12 +274,14 @@ public class Client  extends Application
 						}
 
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
+						// Kontrolliertes schließen der Verbindung im Fehlerfall
 						try {
 							dis.close();
 							dos.close();
 							cdis.close();
 							cdos.close();
+							s.close();
+							controllSock.close();
 						} catch (IOException e1) {
 							System.out.println("Problem with Closing the Connection.");
 							continue;
@@ -302,34 +293,11 @@ public class Client  extends Application
 			} 
 		}); 
 
+		// Wenn kein Fehler vorliegt, starte die Threads
 		if(noError) {
 			sendMessage.start(); 
 			readMessage.start();
 		}
-
-
-		// username thread 
-		/*
-     Thread sendUsername = new Thread(new Runnable()  
-     { 
-         @Override
-         public void run() { 
-             while (true) { 
-
-                 // read the message to deliver. 
-            	 String username = scn.nextLine(); 
-
-
-                 try { 
-                     // write on the output stream 
-                     dos.writeUTF(username); 
-                 } catch (IOException e) { 
-                     e.printStackTrace(); 
-                 } 
-             } 
-         } 
-     });
-		 */
 	}
 
 	public static void openChatroom(String user){
@@ -353,23 +321,6 @@ public class Client  extends Application
 				if(cc.setReceivedMessage(oldMessages.get(i)))
 					oldMessages.remove(oldMessages.get(i));
 			}
-
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	public static void openOverview(String user){
-		FXMLLoader loader = new FXMLLoader(Client.class.getResource("/gui/Overview.fxml"));
-
-		try {
-			AnchorPane secondaryLayout = loader.load();
-			Scene overviewScene= new Scene(secondaryLayout);
-			Stage newWindow = new Stage();
-			newWindow.setTitle("Overview");
-			newWindow.setScene(overviewScene);
-			newWindow.show();
-			OverviewController cc = loader.getController();
 
 
 		} catch (IOException e) {
