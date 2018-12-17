@@ -210,7 +210,7 @@ class ClientHandler implements Runnable
 						if (mc.name.equals(recipient) && mc.isloggedin==true) 
 						{ 
 							timeStamp = new SimpleDateFormat("dd.MM.yyyy_HH:mm:ss").format(Calendar.getInstance().getTime());
-							mc.dos.writeUTF("Am "+timeStamp+" schrieb "+this.name+" : \n"+MsgToSend); 
+							mc.dos.writeUTF(this.name+" schrieb am "+timeStamp+" : \n"+MsgToSend); 
 							break; 
 						} 
 					} 

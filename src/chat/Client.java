@@ -29,24 +29,34 @@ public class Client  extends Application
 	static DataOutputStream dos;
 	static DataInputStream cdis;
 	static DataOutputStream cdos;
-	static String username = "Marcel";
+	static String username = "Nicht angemeldet";
+	static boolean connectionLost = false;
 
 	public static List<ChatroomController>ccl = Collections.synchronizedList(new LinkedList<ChatroomController>());
 	static List<String>oldMessages = Collections.synchronizedList(new LinkedList<String>());
 
 	public static void main(String args[]) throws UnknownHostException, IOException  
 	{ 
-		  try{
-			  System.out.println("Your Username: "+args[0]);
-			  username = args[0];
-		    } catch (IndexOutOfBoundsException e){
-		        System.out.println("Bitte geben Sie dem Programm ihren Nutzernamen als Übergabeparameter mit !");
-		        System.exit(0);
-		    }
-	
-			
-	
-		launch(args);
+		boolean startMainPage = true;
+		try{
+			System.out.println("Your Username: "+args[0]);
+			username = args[0];
+		} catch (IndexOutOfBoundsException e){
+			startMainPage = false;
+			Platform.runLater(new Runnable() {
+				@Override public void run() {
+					Alert alert = new Alert(AlertType.INFORMATION);
+					alert.setTitle("Information Dialog");
+					alert.setHeaderText(null);
+					alert.setContentText("Bitte geben Sie dem Programm ihren Nutzernamen als Übergabeparameter mit !");
+					alert.showAndWait();
+					System.exit(0);
+				}
+			});	
+		}
+
+
+		if (startMainPage) launch(args);
 	} 
 
 	public void sendMessage(String message) {
@@ -63,7 +73,7 @@ public class Client  extends Application
 		AnchorPane pane;
 		try {
 			pane = loader.load();
-			
+
 			// +++++++++++++++++++++++++++++++++++++++++++++
 			// Stage konfigurieren
 			// +++++++++++++++++++++++++++++++++++++++++++++
@@ -79,8 +89,8 @@ public class Client  extends Application
 		} catch (IOException e2) {
 			e2.printStackTrace();
 		}
-		
-		
+
+
 		//create Maincontroller
 		//		
 		OverviewController oc = loader.getController();
@@ -91,17 +101,17 @@ public class Client  extends Application
 
 		InetAddress ip;
 		boolean noError =true;
-	
+
 		try {
 			ip = InetAddress.getByName("192.168.178.85");
-			
+
 			//Damit wird die Verbindung schneller geschlossen wenn der Server nicht erreichbar ist
 			if(!ip.isReachable(4000)) {
 				throw new IOException("No Connection to Server");
 			}
 			Socket s = new Socket(ip, ServerPort); 
 			Socket controllSock = new Socket(ip, ServerPort);
-			
+
 			// obtaining input and out streams 
 			dis = new DataInputStream(s.getInputStream()); 
 			dos = new DataOutputStream(s.getOutputStream()); 
@@ -124,16 +134,18 @@ public class Client  extends Application
 					System.exit(0);
 				}
 			});
-			
-		
+
+
 		} 
-		
+
 
 		Thread updateOnlineUsers = new Thread(new Runnable()  
 		{ 
 			@Override
 			public void run() { 
 				boolean nameEingetragen =false;
+				
+				String checkUsername;
 				while (true) {
 
 					try {
@@ -141,7 +153,21 @@ public class Client  extends Application
 						if(!nameEingetragen) {
 							cdos.writeUTF("getOwnUsername");
 							cdos.writeUTF("setOwnUsername###"+username+"###"+cdis.readUTF());
-							oc.setLabelUsername(cdis.readUTF());
+							checkUsername = cdis.readUTF();
+							if(!checkUsername.equals(username)) {
+								Platform.runLater(new Runnable() {
+									@Override public void run() {
+										Alert alert = new Alert(AlertType.INFORMATION);
+										alert.setTitle("Information Dialog");
+										alert.setHeaderText(null);
+										alert.setContentText("Ihr Username ist leider schon vorhanden. Bitte wählen Sie einen anderen.");
+
+										alert.showAndWait();
+										System.exit(0);
+									}
+								});	
+							}
+							oc.setLabelUsername(checkUsername);
 							nameEingetragen=true;
 						}
 
@@ -154,7 +180,6 @@ public class Client  extends Application
 						}
 
 					} catch (IOException e) {
-						System.out.println(" ");
 						try {
 							dis.close();
 							dos.close();
@@ -168,18 +193,21 @@ public class Client  extends Application
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
 						} 
+						if (!connectionLost) {
+							connectionLost =true;
+							Platform.runLater(new Runnable() {
+								@Override public void run() {
+									Alert alert = new Alert(AlertType.INFORMATION);
+									alert.setTitle("Information Dialog");
+									alert.setHeaderText(null);
+									alert.setContentText("Server Connection Lost. Programm will be closed!");
 
-						Platform.runLater(new Runnable() {
-							@Override public void run() {
-								Alert alert = new Alert(AlertType.INFORMATION);
-								alert.setTitle("Information Dialog");
-								alert.setHeaderText(null);
-								alert.setContentText("Server Connection Lost. Programm will be closed!");
-
-								alert.showAndWait();
-								System.exit(0);
-							}
-						});	
+									alert.showAndWait();
+									System.exit(0);
+								}
+							});	
+						}
+						
 					}
 
 					// 5 Sekunden warten damit der Server nicht mit Anfragen überhäuft wird.
@@ -193,8 +221,8 @@ public class Client  extends Application
 				} 
 			} 
 		});
-		
-		
+
+
 		if(noError)
 			updateOnlineUsers.start();
 
@@ -239,7 +267,7 @@ public class Client  extends Application
 									Client.openChatroom(username);	
 								}
 							});
-							
+
 						}
 
 						for(ChatroomController cc:ccl) {
@@ -258,7 +286,6 @@ public class Client  extends Application
 
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
-						System.out.println("Server Connection Lost. Reader");
 						try {
 							dis.close();
 							dos.close();
@@ -274,12 +301,12 @@ public class Client  extends Application
 				} 
 			} 
 		}); 
-		
+
 		if(noError) {
 			sendMessage.start(); 
 			readMessage.start();
 		}
-		
+
 
 		// username thread 
 		/*
@@ -314,7 +341,7 @@ public class Client  extends Application
 			Stage newWindow = new Stage();
 			newWindow.setTitle("Chatroom");
 			newWindow.setScene(chatroomScene);
-			
+
 			newWindow.show();
 			ChatroomController cc = loader.getController();
 			cc.setChatpartner(user);
@@ -343,13 +370,11 @@ public class Client  extends Application
 			newWindow.setScene(overviewScene);
 			newWindow.show();
 			OverviewController cc = loader.getController();
-		
+
 
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
-
 	}
 
 	@Override
