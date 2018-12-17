@@ -28,14 +28,23 @@ public class Client  extends Application
 	static DataOutputStream dos;
 	static DataInputStream cdis;
 	static DataOutputStream cdos;
-	static String username = "felix1";
+	static String username = "Marcel";
 
 	public static List<ChatroomController>ccl = Collections.synchronizedList(new LinkedList<ChatroomController>());
 	static List<String>oldMessages = Collections.synchronizedList(new LinkedList<String>());
 
 	public static void main(String args[]) throws UnknownHostException, IOException  
 	{ 
-		//System.out.println(args[0]);
+		  try{
+			  System.out.println("Your Username: "+args[0]);
+			  username = args[0];
+		    } catch (IndexOutOfBoundsException e){
+		        System.out.println("Bitte geben Sie dem Programm ihren Nutzernamen als Übergabeparameter mit !");
+		        System.exit(0);
+		    }
+	
+			
+	
 		launch(args);
 	} 
 
