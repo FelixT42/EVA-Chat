@@ -209,7 +209,7 @@ class ClientHandler implements Runnable
 						// output stream 
 						if (mc.name.equals(recipient) && mc.isloggedin==true) 
 						{ 
-							timeStamp = new SimpleDateFormat("dd.MM.yyyy_HH:mm:ss").format(Calendar.getInstance().getTime());
+							timeStamp = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(Calendar.getInstance().getTime());
 							mc.dos.writeUTF(this.name+" schrieb am "+timeStamp+" : \n"+MsgToSend); 
 							break; 
 						} 
