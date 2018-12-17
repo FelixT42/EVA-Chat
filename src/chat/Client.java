@@ -35,6 +35,7 @@ public class Client  extends Application
 
 	public static void main(String args[]) throws UnknownHostException, IOException  
 	{ 
+		//System.out.println(args[0]);
 		launch(args);
 	} 
 
@@ -77,6 +78,7 @@ public class Client  extends Application
 
 		// getting localhost ip 
 		//IP adress from the server
+
 		InetAddress ip;
 		boolean noError =true;
 	
@@ -318,6 +320,25 @@ public class Client  extends Application
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	public static void openOverview(String user){
+		FXMLLoader loader = new FXMLLoader(Client.class.getResource("../gui/Overview.fxml"));
+
+		try {
+			AnchorPane secondaryLayout = loader.load();
+			Scene overviewScene= new Scene(secondaryLayout);
+			Stage newWindow = new Stage();
+			newWindow.setTitle("Overview");
+			newWindow.setScene(overviewScene);
+			newWindow.show();
+			OverviewController cc = loader.getController();
+		
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+
 	}
 
 	@Override
