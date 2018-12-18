@@ -6,6 +6,7 @@ import java.util.StringTokenizer;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -37,6 +38,10 @@ public class ChatroomController {
 		if(!tEingabe.getText().isEmpty())
 			send=true;
 	}
+	
+
+	
+	
 	public synchronized boolean setReceivedMessage(String receivedTxt) {
 
 		String username = receivedTxt.substring(31, receivedTxt.indexOf(':',31)-1);

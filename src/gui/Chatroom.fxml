@@ -8,7 +8,15 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.ChatroomController">
    <children>
+
+      <Button fx:id="btnSenden" layoutX="480.0" layoutY="303.0" mnemonicParsing="false" onKeyPressed="#senden" prefHeight="50.0" prefWidth="106.0" text="Senden">
+         <font>
+            <Font size="22.0" />
+         </font>
+      </Button>
+
       <TextArea fx:id="tEingabe" layoutX="14.0" layoutY="270.0" onKeyPressed="#enter" prefHeight="116.0" prefWidth="450.0" />
+
       <TextArea fx:id="tChatverlauf" editable="false" layoutX="14.0" layoutY="58.0" prefHeight="202.0" prefWidth="450.0" />
       <Text layoutX="34.0" layoutY="36.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Chatroom mit " wrappingWidth="125.13671875">
          <font>
@@ -20,10 +28,5 @@
             <Font size="18.0" />
          </font>
       </Text>
-      <Button fx:id="btnSenden" layoutX="480.0" layoutY="303.0" mnemonicParsing="false" onMouseClicked="#senden" prefHeight="50.0" prefWidth="106.0" text="Senden">
-         <font>
-            <Font size="22.0" />
-         </font>
-      </Button>
    </children>
 </AnchorPane>

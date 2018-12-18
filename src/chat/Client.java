@@ -132,8 +132,7 @@ public class Client  extends Application
 				}
 			});
 		} 
-		Thread updateOnlineUsers = new Thread(new Runnable()  
-		{ 
+		Thread updateOnlineUsers = new Thread(new Runnable(){ 
 			@Override
 			public void run() { 
 				boolean nameEingetragen =false;				
@@ -174,7 +173,6 @@ public class Client  extends Application
 							cdis.close();
 							cdos.close();
 							s.close();
-							controllSock.close();
 							TimeUnit.SECONDS.sleep(5);
 						} catch (IOException e1) {
 							System.out.println("Problem with Closing the Connection.");
