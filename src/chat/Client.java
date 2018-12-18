@@ -312,31 +312,41 @@ public class Client  extends Application
 	}
 
 	public static void openChatroom(String user){
-		FXMLLoader loader = new FXMLLoader(Client.class.getResource("/gui/Chatroom.fxml"));
-
-		try {
-			AnchorPane secondaryLayout = loader.load();
-			Scene chatroomScene= new Scene(secondaryLayout);
-			Stage newWindow = new Stage();
-			newWindow.setTitle("Chatroom");
-			newWindow.setScene(chatroomScene);
-
-			newWindow.show();
-			ChatroomController cc = loader.getController();
-			cc.setChatpartner(user);
-			ccl.add(cc);
-			newWindow.setOnCloseRequest( event->{
-				ccl.remove(cc);
-			});
-			for(int i=0;i<oldMessages.size();i++) {
-				if(cc.setReceivedMessage(oldMessages.get(i)))
-					oldMessages.remove(oldMessages.get(i));
+		
+		boolean stillOpen=false;
+		for(int i=0 ; i<ccl.size(); i++) {
+			if(ccl.get(i).getChatpartner().equals(user)) {
+				stillOpen=true;
 			}
-
-
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
+		if(!stillOpen) {
+			FXMLLoader loader = new FXMLLoader(Client.class.getResource("/gui/Chatroom.fxml"));
+
+			try {
+				AnchorPane secondaryLayout = loader.load();
+				Scene chatroomScene= new Scene(secondaryLayout);
+				Stage newWindow = new Stage();
+				newWindow.setTitle("Chatroom");
+				newWindow.setScene(chatroomScene);
+
+				newWindow.show();
+				ChatroomController cc = loader.getController();
+				cc.setChatpartner(user);
+				ccl.add(cc);
+				newWindow.setOnCloseRequest( event->{
+					ccl.remove(cc);
+				});
+				for(int i=0;i<oldMessages.size();i++) {
+					if(cc.setReceivedMessage(oldMessages.get(i)))
+						oldMessages.remove(oldMessages.get(i));
+				}
+
+
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
 	}
 
 	@Override
