@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.StringTokenizer;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -107,6 +108,17 @@ public class ChatroomController {
 		}
 		
 		
+	}
+	
+	@FXML
+	public void enter(KeyEvent e) {
+		if(e.getCode() == KeyCode.ENTER) {
+			MouseEvent me = new MouseEvent(null, 0, 0, 0, 0, null, 0, 
+					 isOnline, isOnline, isOnline, isOnline, isOnline, isOnline, isOnline, 
+					 isOnline, isOnline, isOnline, null);
+			senden(me);
+		}
+			
 	}
 	
 }

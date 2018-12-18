@@ -76,6 +76,7 @@ public class OverviewController {
 	public void exitApplication(ActionEvent event) {
 	   Platform.exit();
 	}
+
 	
 }
 
