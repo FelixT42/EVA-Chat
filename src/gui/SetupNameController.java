@@ -16,7 +16,7 @@ public class SetupNameController {
 	
 	public void pressStart() {
 		//open Overview.fxml here
-		Client.openOverview(tSetupUsername.getText());
+		//Client.openOverview(tSetupUsername.getText());
 		
 	}
 	

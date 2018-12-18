@@ -152,6 +152,7 @@ class ClientHandler implements Runnable
 							dos.close();
 							cdis.close();
 							cdos.close();
+						
 						} catch (IOException e1) {
 							// TODO Auto-generated catch block
 							continue;
