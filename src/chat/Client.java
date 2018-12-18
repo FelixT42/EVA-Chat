@@ -181,7 +181,7 @@ public class Client  extends Application
 							continue;
 						} catch (InterruptedException e1) {
 							// TODO Auto-generated catch block
-							e1.printStackTrace();
+							connectionLost=false;
 						} 
 						if (!connectionLost) {
 							connectionLost =true;
@@ -228,7 +228,20 @@ public class Client  extends Application
 								// write on the output stream 
 								dos.writeUTF(ccl.get(i).getMessage()+"#"+ccl.get(i).getChatpartner()); 
 							} catch (IOException e) { 
-								e.printStackTrace(); 
+								if (!connectionLost) {
+									connectionLost =true;
+									Platform.runLater(new Runnable() {
+										@Override public void run() {
+											Alert alert = new Alert(AlertType.INFORMATION);
+											alert.setTitle("Information Dialog");
+											alert.setHeaderText(null);
+											alert.setContentText("Server Connection Lost. Programm will be closed!");
+
+											alert.showAndWait();
+											System.exit(0);
+										}
+									});	
+								}
 							} 
 						}
 					}
