@@ -40,7 +40,6 @@ public class Client  extends Application
 	{ 
 		boolean startMainPage = true;
 		try{
-			System.out.println("Your Username: "+args[0]);
 			username = args[0];
 		} catch (IndexOutOfBoundsException e){
 			startMainPage = false;
@@ -55,8 +54,6 @@ public class Client  extends Application
 				}
 			});	
 		}
-
-
 		if (startMainPage) launch(args);
 	} 
 
@@ -220,28 +217,33 @@ public class Client  extends Application
 			public void run(){ 
 				while (true) { 
 					for(int i=0; i<ccl.size();i++) {
-						if (ccl.size()>0 && ccl.get(i).isSendClicked()) {
+						try {
+							if (ccl.size()>0 && ccl.get(i).isSendClicked()) {
 
-							try { 
-								// write on the output stream 
-								dos.writeUTF(ccl.get(i).getMessage()+"#"+ccl.get(i).getChatpartner()); 
-							} catch (IOException e) { 
-								if (!connectionLost) {
-									connectionLost =true;
-									Platform.runLater(new Runnable() {
-										@Override public void run() {
-											Alert alert = new Alert(AlertType.INFORMATION);
-											alert.setTitle("Information Dialog");
-											alert.setHeaderText(null);
-											alert.setContentText("Server Connection Lost. Programm will be closed!");
+								try { 
+									// write on the output stream 
+									dos.writeUTF(ccl.get(i).getMessage()+"#"+ccl.get(i).getChatpartner()); 
+								} catch (IOException e) { 
+									if (!connectionLost) {
+										connectionLost =true;
+										Platform.runLater(new Runnable() {
+											@Override public void run() {
+												Alert alert = new Alert(AlertType.INFORMATION);
+												alert.setTitle("Information Dialog");
+												alert.setHeaderText(null);
+												alert.setContentText("Server Connection Lost. Programm will be closed!");
 
-											alert.showAndWait();
-											System.exit(0);
-										}
-									});	
-								}
-							} 
+												alert.showAndWait();
+												System.exit(0);
+											}
+										});	
+									}
+								} 
+							}
+						}catch(IndexOutOfBoundsException e) {
+							continue;
 						}
+						
 					}
 
 				} 

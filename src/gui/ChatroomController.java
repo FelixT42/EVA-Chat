@@ -62,7 +62,6 @@ public class ChatroomController {
 
 	public String getMessage() {
 		timeStamp = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(Calendar.getInstance().getTime());
-		//hier muss noch der teil mit der raute rausgeholt werden
 		tChatverlauf.appendText("Am "+timeStamp+" schrieb ich : \n"+tEingabe.getText()+"\n");
 		send=false;
 		String text = tEingabe.getText();
