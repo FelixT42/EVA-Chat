@@ -107,9 +107,7 @@ class ClientHandler implements Runnable
 							for (int i=1; i<Server.clients.size();i++) {
 								usernames+="###"+Server.clients.elementAt(i).name;
 							}
-
 							cdos.writeUTF(usernames);
-
 						}
 
 						//Setzen des eigenen Usernamens
@@ -125,9 +123,7 @@ class ClientHandler implements Runnable
 								if (Server.clients.elementAt(i).name.equals(userName)) {
 									userName="Nicht angemeldet";
 									break;
-
 								}
-
 								if (Server.clients.elementAt(i).name.equals(temp)) {
 									Server.clients.elementAt(i).name=userName;
 								}
@@ -152,7 +148,7 @@ class ClientHandler implements Runnable
 							dos.close();
 							cdis.close();
 							cdos.close();
-						
+
 						} catch (IOException e1) {
 							// TODO Auto-generated catch block
 							continue;
@@ -177,36 +173,24 @@ class ClientHandler implements Runnable
 			{ 
 				//empfangener String
 				received = dis.readUTF();
-
-				System.out.println(received); 
-
-				if(received.equals("logout")){ 
-					this.isloggedin=false; 
-					this.s.close(); 
-					break; 
-				} 
-				boolean isMessage = true;
-
-				// Wenn keine Nachrticht sonder ein Steuerbefehl übertragen wird, wird dieser Teil übersprungen
-				if(isMessage) {
-					// break the string into message and recipient part 
-					StringTokenizer st = new StringTokenizer(received, "#"); 
-					String MsgToSend = st.nextToken(); 
-					String recipient = st.nextToken(); 
-					// search for the recipient in the connected devices list. 
-					// ar is the vector storing client of active users 
-					for (ClientHandler mc : Server.clients) 
+				// break the string into message and recipient part 
+				StringTokenizer st = new StringTokenizer(received, "#"); 
+				String MsgToSend = st.nextToken(); 
+				String recipient = st.nextToken(); 
+				// search for the recipient in the connected devices list. 
+				// ar is the vector storing client of active users 
+				for (ClientHandler mc : Server.clients) 
+				{ 
+					// if the recipient is found, write on its 
+					// output stream 
+					if (mc.name.equals(recipient) && mc.isloggedin==true) 
 					{ 
-						// if the recipient is found, write on its 
-						// output stream 
-						if (mc.name.equals(recipient) && mc.isloggedin==true) 
-						{ 
-							timeStamp = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(Calendar.getInstance().getTime());
-							mc.dos.writeUTF("Am "+timeStamp+" schrieb "+this.name+" : \n"+MsgToSend); 
-							break; 
-						} 
+						timeStamp = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(Calendar.getInstance().getTime());
+						mc.dos.writeUTF("Am "+timeStamp+" schrieb "+this.name+" : \n"+MsgToSend); 
+						break; 
 					} 
-				}
+				} 
+
 
 			} catch (IOException e) { 
 				Server.clients.remove(this);
@@ -222,6 +206,8 @@ class ClientHandler implements Runnable
 			// closing resources 
 			this.dis.close(); 
 			this.dos.close(); 
+			this.cdis.close(); 
+			this.cdos.close(); 
 
 		}catch(IOException e){ 
 			e.printStackTrace(); 

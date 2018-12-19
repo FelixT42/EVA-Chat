@@ -23,17 +23,10 @@ public class OverviewController {
 	private Label lblUsername;
 
 	@FXML
-	protected void logout(ActionEvent event) {
-		lblUsername.setText("Test");
-	}
-
-	@FXML
 	protected void clickOnOnlineList(MouseEvent event) {
 		
 		//Nur auf Doppelklick reagieren. Dazu dient lastClickedUser
 		String user = (String) lstOnline.getSelectionModel().getSelectedItem();
-		
-		
 		if(user !=null && user.equals(lastClickedUser)) {
 			System.out.println(user);
 			Client.openChatroom(user);
